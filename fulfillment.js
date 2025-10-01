@@ -14,38 +14,38 @@ const { periode_short_format, startdate_short_format, enddate_short_format } = r
     await page.goto('https://dashboard.telkom.co.id/infrastructure');
 
     // Screenshoot cpt
-    // const element = await page.$('#captcha-element > img'); // ganti #main dengan id target
-    // if (element) {
-    //   await element.screenshot({
-    //     path: 'captcha/cpt.png',
-    //   });
-    // } else {
-    //   console.log('? Elemen dengan id tersebut tidak ditemukan');
-    // }
+    const element = await page.$('#captcha-element > img'); // ganti #main dengan id target
+    if (element) {
+      await element.screenshot({
+        path: 'captcha/cpt.png',
+      });
+    } else {
+      console.log('? Elemen dengan id tersebut tidak ditemukan');
+    }
 
     // // mbil cpacha dari database
-    // function getData() {
-    //   return new Promise((resolve, reject) => {
-    //     const query = "SELECT pesan FROM get_otp_for_download WHERE pesan LIKE '%cpt%' ORDER BY id DESC LIMIT 1";
-    //     connection.query(query, (err, results) => {
-    //       if (err) return reject(err);
-    //       resolve(results);
-    //     });
-    //   });
-    // }
+    function getData() {
+      return new Promise((resolve, reject) => {
+        const query = "SELECT pesan FROM get_otp_for_download WHERE pesan LIKE '%cpt%' ORDER BY id DESC LIMIT 1";
+        connection.query(query, (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+        });
+      });
+    }
 
     // Isi formulir login
     await page.waitForSelector('#uname');
     await page.type('#uname', user_care);
     await page.type('#passw', pass_care);
     await page.waitForTimeout(10000);
-    // await page.waitForSelector('#captcha-input');
-    // const result = await getData();
-    // const pesan = result[0].pesan; // contoh: "cpt azp"
-    // const parts = pesan.split(' ');
-    // const captcha = parts[1] || null; // ambil kata setelah "cpt"
-    // console.log(captcha);
-    // await page.type('#captcha-input', String(captcha)); // pastikan string
+    await page.waitForSelector('#captcha-input');
+    const result = await getData();
+    const pesan = result[0].pesan; // contoh: "cpt azp"
+    const parts = pesan.split(' ');
+    const captcha = parts[1] || null; // ambil kata setelah "cpt"
+    console.log(captcha);
+    await page.type('#captcha-input', String(captcha)); // pastikan string
 
     // Cek dan klik checkbox jika belum dicentang
     const checkboxSelector = '#agree';
