@@ -1,0 +1,26 @@
+A. Running untuk mengambil data scrapper dari dashboard
+    1. node wsa_gamas
+    2. node fulfillment
+    3. node telkomcare
+    4. node wifi_revi
+    5. node asr_wifi
+
+B. Running untuk insert data ke database.
+--- pindah directory dulu ketik cd loaded_file -------
+    1. node wsa_gamas
+    2. node wsa_assurance
+    3. node fulfillment
+    4. node insert_ff_ih
+    5. node insert_ff_hsi
+    6. node asr_wifi
+    7. node asr_datin
+    8. node assurance
+    9. node wifi_revi
+    10. node av_wifi
+    11. node ttr_ffg_non_hsi
+    12. node ps_re
+    13. node cnop_critical
+
+C. Running program Delete
+---- Untuk Menghemat Storage hapus file hasil download dan data dummy yang tidak diperlukan
+ketik node delete

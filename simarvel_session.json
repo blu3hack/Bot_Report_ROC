@@ -1,0 +1,32 @@
+[
+  {
+    "name": "simarvel_session",
+    "value": "eyJpdiI6IlFhOTRYSWxmcEpKSTlBRnF1eVBCMnc9PSIsInZhbHVlIjoiaFdsSi9kajB4MVVMNGZIVXlnNFNMSk8yTzBPYXlVZWl3d3A2Y1I1TzRsV01vWTNIWEk5T3l4ZVpXMnZTVWhnMkZ0UEJhRmhSaTVSdjFvYjgyZWVqQ0tpUHl3QlBCVTdiT3daUnlkWmxjcE4wUUJyb0dpTkxaenFhbVRGb1NlZisiLCJtYWMiOiI0NzFmZDRkODE0YjZlMzY5OTA0ZGQxZDQzNDhmNGRkMTZiOGUxMzE4ZjFlMDRjM2Y4YWYwOTY0MmY5NzdmYTcwIiwidGFnIjoiIn0%3D",
+    "domain": "simarvel-dev.telkom.co.id",
+    "path": "/",
+    "expires": 1749704244.274996,
+    "size": 358,
+    "httpOnly": true,
+    "secure": false,
+    "session": false,
+    "sameSite": "Lax",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "XSRF-TOKEN",
+    "value": "eyJpdiI6ImEvOHc5ZHpNTWhQeXFFeVZSN0Joc1E9PSIsInZhbHVlIjoiMWxRMUZMQlVvSGIzWDFtSUdBMUZGNUVNdzh3VU00OVNwR0VKV3AvcE1wK3lwMkNteDNGTFRwa3hHN2lPMFMxdXoyNDV3Mkk3SzJsTVVNWURiUE9ZY21pamZJbFlZajRyd21YU2xuM1VIYnpXSUNXSzhPZ2RmRGprcmRvMkR1d3ciLCJtYWMiOiJiMGE3YjVlYzMzYTdhYWIxNWJlNmU0N2YyZDRiYTUyZGYzZWVkMTcyNzJiOTM2MDkzNGQ0OGI5YTY3NTI2MmVmIiwidGFnIjoiIn0%3D",
+    "domain": "simarvel-dev.telkom.co.id",
+    "path": "/",
+    "expires": 1749704244.274812,
+    "size": 352,
+    "httpOnly": false,
+    "secure": false,
+    "session": false,
+    "sameSite": "Lax",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  }
+]

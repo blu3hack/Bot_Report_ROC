@@ -1,0 +1,782 @@
+﻿var UIExtendedModals = function () {
+
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+
+            //dynamic demo:
+            $('.dynamic .demo').click(function(){
+              var tmpl = [
+                // tabindex is required for focus
+                '<div class="modal hide fade" tabindex="-1">',
+                  '<div class="modal-header">',
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
+                    '<h4 class="modal-title">Modal header</h4>', 
+                  '</div>',
+                  '<div class="modal-body">',
+                    '<p>Test</p>',
+                  '</div>',
+                  '<div class="modal-footer">',
+                    '<a href="#" data-dismiss="modal" class="btn btn-default">Close</a>',
+                    '<a href="#" class="btn btn-primary">Save changes</a>',
+                  '</div>',
+                '</div>'
+              ].join('');
+              
+              $(tmpl).modal();
+            });
+
+            //ajax demo:
+            var $modal = $('#ajax-modal');
+
+            $('#ajax-demo').on('click', function(){
+              // create the backdrop and wait for next modal to be triggered
+              $('body').modalmanager('loading');
+
+              setTimeout(function(){
+                  $modal.load('ui_extended_modals_ajax_sample.html', '', function(){
+                  $modal.modal();
+                });
+              }, 1000);
+            });
+
+            $modal.on('click', '.update', function(){
+              $modal.modal('loading');
+              setTimeout(function(){
+                $modal
+                  .modal('loading')
+                  .find('.modal-body')
+                    .prepend('<div class="alert alert-info fade in">' +
+                      'Updated!<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '</div>');
+              }, 1000);
+            });
+        }
+
+    };
+
+}();
+
+var UIExtendedModals2 = function () {
+
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+
+            //ajax demo:
+            var $modal = $('#ajax-modal');
+
+			// handle record edit/remove
+            $('body').on('click', '#graph_table_wrapper .btn-graph', function() {
+              var graphid =  $(this).attr("data-id");
+                
+              // create the backdrop and wait for next modal to be triggered
+              $('body').modalmanager('loading');
+
+              setTimeout(function(){
+                  $modal.load('/escort/graph/detail?ajaxview=true&graph='+graphid, '', function(){
+                  $modal.modal();
+                });
+              }, 1000);
+            });
+
+            $modal.on('click', 'button#graphfilter', function(){
+              $modal.modal('loading');
+              var start = '';
+              var time = '';
+              if($modal.find('input#startdate')!=undefined && $modal.find('input#startdate').val()!=''){
+                start = $modal.find('input#startdate').val()+':00';
+                //alert(start);
+                start = Date.parse(start)/1000;
+                time += '&graph_start='+start;
+              }
+              
+              var end = '';
+              if($modal.find('input#enddate')!=undefined && $modal.find('input#enddate').val()!=''){
+                end = $modal.find('input#enddate').val()+':00';
+                //alert(end);
+                end = Date.parse(end)/1000;
+                time += '&graph_end='+end;
+              }
+              
+              var graph = '';
+              if($modal.find('input#graph')!=undefined && $modal.find('input#graph').val()!=''){
+                var graph = $modal.find('input#graph').val();
+                //alert(graph);
+              }
+              
+              //alert('graph='+graph+'&startdate='+start+'&enddate='+end);
+              //url = '/escort/graph/detail?ajaxview=true&graph='+graph+'&startdate='+start+'&enddate='+end;
+              //alert(url);
+              var html = '';
+              if(start!='' && end!=''){
+               html = '<iframe style="width:100%;display:block;min-height:323px;border:none;" src="http://10.62.8.126/cacti/him_graph2.php?action=zoom&local_graph_id='+graph+'&rra_id=5&view_type='+time+'" />';
+              }else{
+               html = '<iframe style="width:100%;display:block;min-height:323px;border:none;" src="http://10.62.8.126/cacti/him_graph2.php?action=zoom&local_graph_id='+graph+'&rra_id=5&view_type='+time+'" /><iframe style="width:100%;display:block;min-height:323px;border:none;" src="http://10.62.8.126/cacti/him_graph2.php?action=zoom&local_graph_id='+graph+'&rra_id=1&view_type='+time+'" /><iframe style="width:100%;display:block;min-height:323px;border:none;" src="http://10.62.8.126/cacti/him_graph2.php?action=zoom&local_graph_id='+graph+'&rra_id=2&view_type='+time+'" /><iframe style="width:100%;display:block;min-height:323px;border:none;" src="http://10.62.8.126/cacti/him_graph2.php?action=zoom&local_graph_id='+graph+'&rra_id=3&view_type='+time+'" /><iframe style="width:100%;display:block;min-height:323px;border:none;" src="http://10.62.8.126/cacti/him_graph2.php?action=zoom&local_graph_id='+graph+'&rra_id=4&view_type='+time+'" />';
+              }
+              setTimeout(function(){
+                $modal
+                  .modal('loading')
+                  .find('#framecontent').html(html)
+                  /*.load(url, '', function(){
+                     $modal.modal();
+                   });*/
+              }, 1000);
+            });
+
+            $modal.on('click', 'button#graphclear', function(){
+              if($modal.find('input#startdate')!=undefined && $modal.find('input#startdate').val()!=''){
+                $modal.find('input#startdate').val('');
+              }
+              
+              if($modal.find('input#enddate')!=undefined && $modal.find('input#enddate').val()!=''){
+                $modal.find('input#enddate').val('');
+              }
+            });
+        }
+
+    };
+
+}();
+
+var UIExtendedModals3 = function () {
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+            
+            //static demo:
+            var $modal2 = $('#static');
+
+			// handle record edit/remove
+            $('body').on('click', '#user_table_wrapper .btn-delete', function() {
+              var id =  $(this).attr("data-id");
+              var uname =  $(this).attr("data-uname");
+              var fullname =  $(this).attr("data-fullname");
+              var email =  $(this).attr("data-email");
+              var ubis =  $(this).attr("data-ubis");
+              var sububis =  $(this).attr("data-sububis");
+              var position =  $(this).attr("data-position");
+              var mobilephone =  $(this).attr("data-mobilephone");
+              var fixedphone =  $(this).attr("data-fixedphone");
+              
+              if($modal2.find('td#static_id')!=undefined){
+                $modal2.find('td#static_id').html(id);
+              }
+              
+              if($modal2.find('td#static_uname')!=undefined){
+                $modal2.find('td#static_uname').html(uname);
+              }
+              
+              if($modal2.find('td#static_fullname')!=undefined){
+                $modal2.find('td#static_fullname').html(fullname);
+              }
+              
+              if($modal2.find('td#static_email')!=undefined){
+                $modal2.find('td#static_email').html(email);
+              }
+              
+              if($modal2.find('td#static_ubis')!=undefined){
+                $modal2.find('td#static_ubis').html(ubis);
+              }
+              
+              if($modal2.find('td#static_sububis')!=undefined){
+                $modal2.find('td#static_sububis').html(sububis);
+              }
+              
+              if($modal2.find('td#static_position')!=undefined){
+                $modal2.find('td#static_position').html(position);
+              }
+              
+              if($modal2.find('td#static_mobilephone')!=undefined){
+                $modal2.find('td#static_mobilephone').html(mobilephone);
+              }
+              
+              if($modal2.find('td#static_fixedphone')!=undefined){
+                $modal2.find('td#static_fixedphone').html(fixedphone);
+              }
+              $modal2.modal();                
+            });
+			
+            $modal2.on('click', 'button#deleteconfirm', function(){
+				var id = $modal2.find('td#static_id').html();
+				//alert(id);
+				$.ajax({
+					url:"/ajax/deleteuser",
+					content:'json',
+					type:'post',
+					data:{uid:id},
+					beforeSend:function(){
+						$('#processbar2').removeClass('hidden');
+						$('#alertinfo2').removeClass('alert-success');
+						$('#alertinfo2').removeClass('alert-warning');
+						$('#alertinfo2').removeClass('alert-danger');
+						$('#alertinfo2').removeClass('alert-info');
+					},
+					complete:function(result){
+						$('#processbar2').addClass('hidden');
+					},
+					success: function(data){
+						//console.log(data);
+						if(data.result!=undefined){
+							if(data.result==true){
+								$('#alertinfo2').addClass('alert-success');
+								$('#alertmsg2').html("<strong>Success!</strong> "+data.retMsg);
+								$("a.reload").click();
+								$modal2.modal('hide');
+							}else{
+								$('#alertinfo2').addClass('alert-warning');
+								$('#alertmsg2').html("<strong>Failed!</strong> "+data.retMsg);
+							}
+						}else{
+							$('#alertinfo2').addClass('alert-info');
+							$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						}
+						$('#alertinfo2').removeClass('hidden');
+					},
+					error:function(){
+						$('#alertinfo2').addClass('alert-info');
+						$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						$('#alertinfo2').removeClass('hidden');
+					}
+				});
+            });
+            
+            var $modal3 = $('#static2');
+
+			// handle record edit/remove
+            $('body').on('click', '#btn-addnew', function() {
+              $modal3.modal();   
+            });
+            
+            $modal3.on('hide.bs.modal', function (e) {
+				$('#processbar').addClass('hidden');   
+				$('#alertinfo').addClass('hidden'); 
+			});
+            
+            $modal3.on('hidden.bs.modal', function (e) {
+				$('#processbar').addClass('hidden');   
+				$('#alertinfo').addClass('hidden');
+			});
+        }
+
+    };
+
+}();
+
+var UIExtendedModals4 = function () {
+
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+
+            //ajax demo:
+            var $modal = $('#ajax-modal');
+			var intervalComment = null;
+
+			function reloadComment(id,uid){
+				if($modal.find('#listchats')!=undefined){
+					$.ajax({
+						url:"/collaboration/commentsajax/wid/"+id+"/uid/"+uid,
+						content:'json',
+						type:'get',
+						complete:function(result){
+							
+						},
+						success: function(data){
+							$modal.find('#listchats').html( data );
+						
+							$('a#comment'+id).html("Comment ("+$('#listchats').children().length+")");
+						},
+						error:function(){
+							
+						}
+					});
+				}else{
+					if(intervalComment != undefined || intervalComment !=null || intervalComment>0){
+						clearInterval(intervalComment);
+					}
+					intervalComment = null;
+				}
+			}
+            
+            $modal.on('hide.bs.modal', function (e) {
+				if(intervalComment != undefined || intervalComment !=null || intervalComment>0){
+					clearInterval(intervalComment);
+				}
+				intervalComment = null;
+			});
+            
+            $modal.on('hidden.bs.modal', function (e) {
+				if(intervalComment != undefined || intervalComment !=null || intervalComment>0){
+					clearInterval(intervalComment);
+				}
+				intervalComment = null;
+			});
+            
+            $modal.on('hide', function (e) {
+				if(intervalComment != undefined || intervalComment !=null || intervalComment>0){
+					clearInterval(intervalComment);
+				}
+				intervalComment = null;
+			});
+            
+            $modal.on('hidden', function (e) {
+				if(intervalComment != undefined || intervalComment !=null || intervalComment>0){
+					clearInterval(intervalComment);
+				}
+				intervalComment = null;
+			});
+
+			// handle record edit/remove
+            $('body').on('click', '.btn-comment', function() {
+                
+              // create the backdrop and wait for next modal to be triggered
+              $('body').modalmanager('loading');
+              var id =  $(this).attr("data-id");
+              var uid =  $(this).attr("data-uid");
+              setTimeout(function(){
+                  $modal.load('/collaboration/comments/wid/'+id+'/uid/'+uid+'?ajaxview=true', function(){
+                  $modal.modal();
+                  console.log(intervalComment);
+                  
+				  if(intervalComment != undefined || intervalComment !=null || intervalComment>0){
+				    clearInterval(intervalComment);
+				  }
+				  intervalComment = null;
+				  if(intervalComment == undefined || intervalComment ==null || intervalComment<=0){
+					intervalComment = setInterval(function(){reloadComment(id,uid)},5000);
+				  }
+                });
+              }, 1000);
+            });
+        }
+
+    };
+
+}();
+
+var UIExtendedModals5 = function () {
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+            
+            //static demo:
+            var $modal2 = $('#static');
+
+			// handle record edit/remove
+            $('body').on('click', '.btn-delete', function() {
+				var check = $("input[type='checkbox'].child:checked");
+				//console.log(check);
+				if(check.length>0){
+					$modal2.modal();  
+				}else{
+					alert('Please choose the menu to be deleted.');
+				}    
+            });
+			
+            $modal2.on('click', 'button#deleteconfirm', function(){
+				var check = $("input[type='checkbox'].child:checked");
+				//console.log(check);
+				var send = "";
+				for(var i = 0;i<check.length;i++){
+					if(i==0){
+						send += $(check[i]).val();
+					}else{
+						send += ","+$(check[i]).val();
+					}
+				}
+				//console.log(send);
+				
+				$.ajax({
+					url:"/ajax/deletemenu",
+					content:'json',
+					type:'post',
+					data:{data:send},
+					beforeSend:function(){
+						$('#processbar2').removeClass('hidden');
+						$('#alertinfo2').removeClass('alert-success');
+						$('#alertinfo2').removeClass('alert-warning');
+						$('#alertinfo2').removeClass('alert-danger');
+						$('#alertinfo2').removeClass('alert-info');
+					},
+					complete:function(result){
+						$('#processbar2').addClass('hidden');
+					},
+					success: function(data){
+						//console.log(data);
+						if(data.result!=undefined){
+							if(data.result==true){
+								$('#alertinfo2').addClass('alert-success');
+								$('#alertmsg2').html("<strong>Success!</strong> "+data.retMsg+"<br>Please wait page will be refresh...");
+								setTimeout(function(){location.href="/admin/managemenus"},2000);
+							}else{
+								$('#alertinfo2').addClass('alert-warning');
+								$('#alertmsg2').html("<strong>Failed!</strong> "+data.retMsg);
+							}
+						}else{
+							$('#alertinfo2').addClass('alert-info');
+							$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						}
+						$('#alertinfo2').removeClass('hidden');
+					},
+					error:function(){
+						$('#alertinfo2').addClass('alert-info');
+						$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						$('#alertinfo2').removeClass('hidden');
+					}
+				});
+            });
+            
+            var $modal3 = $('#static2');
+
+			// handle record edit/remove
+            $('body').on('click', '#btn-addnew', function(e) {
+              $modal3.modal();   
+              resetForm();
+				e.preventDefault();
+            });
+            
+            $('body').on('click', '.edit', function(e) {
+              var row =  $(this).data("row");
+              $modal3.modal();   
+				$('#processbar').addClass('hidden');   
+				$('#alertinfo').addClass('hidden');
+              //console.log(row);
+              $('#static2').find('.green,.blue').removeClass('green').addClass('blue');
+              $('#formtitle').html("Edit Menu");
+              $('input#id').val(row.id);
+              $('input#name').val(row.menu_name);
+              $('select#parent').children().removeAttr('selected');
+              //console.log('#parent'+row.parent_id);
+              $('#parent'+row.parent_id).attr('selected','selected');
+              $('input#link').val(row.menu_link);
+              $('#spinner1').spinner('value', row.weight);
+              $('input#desc').val(row.menu_desc);
+              if(row.is_active=='1'){
+				$('.make-switch').bootstrapSwitch('setState',true);
+				//$('.switch-animate').removeClass('switch-off');
+				//$('.switch-animate').addClass('switch-on');
+			  }else{
+				$('.make-switch').bootstrapSwitch('setState',false);
+				//$('.switch-animate').removeClass('switch-on');
+				//$('.switch-animate').addClass('switch-off');
+			  }
+			  //$('.make-switch').bootstrapSwitch('setState',true);
+			  //console.log($('.make-switch')['bootstrapSwitch']('status'));
+			  e.preventDefault();
+            });
+            
+            $('.make-switch').on('switch-change', function (e, data) {
+			  var $element = $(data.el),
+				  value = data.value;
+
+			  //$('.make-switch').bootstrapSwitch('setState',true);
+			  //console.log(value);
+			});
+            
+            $modal3.on('hide.bs.modal', function (e) {
+				resetForm();
+			});
+            
+            $modal3.on('hidden.bs.modal', function (e) {
+				resetForm();
+			});
+			
+			
+			var resetForm = function(){
+				$('#processbar').addClass('hidden');   
+				$('#alertinfo').addClass('hidden');
+              //console.log(row);
+              $('#static2').find('.green,.blue').removeClass('blue').addClass('green');
+              $('#formtitle').html("Add new menu");
+              $('input#id').val("");
+              $('input#name').val("");
+              $('select#parent').children().removeAttr('selected');
+              $('input#link').val("");
+              $('#spinner1').spinner('value', 0);
+              $('input#desc').val("");
+				$('.make-switch').bootstrapSwitch('setState',false);
+			}
+        }
+
+    };
+
+}();
+
+var UIExtendedModals6 = function () {
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+            
+            //static demo:
+            var $modal2 = $('#static');
+
+			// handle record edit/remove
+            $('body').on('click', '.btn-delete', function() {
+				var check = $("input[type='checkbox'].child:checked");
+				//console.log(check);
+				if(check.length>0){
+					$modal2.modal();  
+				}else{
+					alert('Please choose the role to be deleted.');
+				}              
+            });
+			
+            $modal2.on('click', 'button#deleteconfirm', function(){
+				var check = $("input[type='checkbox'].child:checked");
+				//console.log(check);
+				var send = "";
+				for(var i = 0;i<check.length;i++){
+					if(i==0){
+						send += $(check[i]).val();
+					}else{
+						send += ","+$(check[i]).val();
+					}
+				}
+				//console.log(send);
+				
+				$.ajax({
+					url:"/ajax/deleteroles",
+					content:'json',
+					type:'post',
+					data:{data:send},
+					beforeSend:function(){
+						$('#processbar2').removeClass('hidden');
+						$('#alertinfo2').removeClass('alert-success');
+						$('#alertinfo2').removeClass('alert-warning');
+						$('#alertinfo2').removeClass('alert-danger');
+						$('#alertinfo2').removeClass('alert-info');
+					},
+					complete:function(result){
+						$('#processbar2').addClass('hidden');
+					},
+					success: function(data){
+						//console.log(data);
+						if(data.result!=undefined){
+							if(data.result==true){
+								$('#alertinfo2').addClass('alert-success');
+								$('#alertmsg2').html("<strong>Success!</strong> "+data.retMsg+"<br>Please wait page will be refresh...");
+								setTimeout(function(){location.href="/admin/manageroles"},2000);
+							}else{
+								$('#alertinfo2').addClass('alert-warning');
+								$('#alertmsg2').html("<strong>Failed!</strong> "+data.retMsg);
+							}
+						}else{
+							$('#alertinfo2').addClass('alert-info');
+							$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						}
+						$('#alertinfo2').removeClass('hidden');
+					},
+					error:function(){
+						$('#alertinfo2').addClass('alert-info');
+						$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						$('#alertinfo2').removeClass('hidden');
+					}
+				});
+            });
+        }
+
+    };
+
+}();
+
+var UIExtendedModals7 = function () {
+    
+    return {
+        //main function to initiate the module
+        init: function () {
+        
+            // general settings
+            $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+              '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+                '<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" style="width: 100%;"></div>' +
+                '</div>' +
+              '</div>';
+
+            $.fn.modalmanager.defaults.resize = true;
+            
+            //static demo:
+            var $modal2 = $('#static');
+
+			// handle record edit/remove
+            $('body').on('click', '#user_table_wrapper .btn-delete', function() {
+              var id =  $(this).attr("data-id");
+              var uname =  $(this).attr("data-uname");
+              var fullname =  $(this).attr("data-fullname");
+              var email =  $(this).attr("data-email");
+              var ubis =  $(this).attr("data-ubis");
+              var sububis =  $(this).attr("data-sububis");
+              var position =  $(this).attr("data-position");
+              var mobilephone =  $(this).attr("data-mobilephone");
+              var fixedphone =  $(this).attr("data-fixedphone");
+              
+              if($modal2.find('td#static_id')!=undefined){
+                $modal2.find('td#static_id').html(id);
+              }
+              
+              if($modal2.find('td#static_uname')!=undefined){
+                $modal2.find('td#static_uname').html(uname);
+              }
+              
+              if($modal2.find('td#static_fullname')!=undefined){
+                $modal2.find('td#static_fullname').html(fullname);
+              }
+              
+              if($modal2.find('td#static_email')!=undefined){
+                $modal2.find('td#static_email').html(email);
+              }
+              
+              if($modal2.find('td#static_ubis')!=undefined){
+                $modal2.find('td#static_ubis').html(ubis);
+              }
+              
+              if($modal2.find('td#static_sububis')!=undefined){
+                $modal2.find('td#static_sububis').html(sububis);
+              }
+              
+              if($modal2.find('td#static_position')!=undefined){
+                $modal2.find('td#static_position').html(position);
+              }
+              
+              if($modal2.find('td#static_mobilephone')!=undefined){
+                $modal2.find('td#static_mobilephone').html(mobilephone);
+              }
+              
+              if($modal2.find('td#static_fixedphone')!=undefined){
+                $modal2.find('td#static_fixedphone').html(fixedphone);
+              }
+              $modal2.modal();                
+            });
+			
+            $modal2.on('click', 'button#deleteconfirm', function(){
+				var id = $modal2.find('td#static_id').html();
+				//alert(id);
+				$.ajax({
+					url:"/ajax/deleteuser",
+					content:'json',
+					type:'post',
+					data:{uid:id},
+					beforeSend:function(){
+						$('#processbar2').removeClass('hidden');
+						$('#alertinfo2').removeClass('alert-success');
+						$('#alertinfo2').removeClass('alert-warning');
+						$('#alertinfo2').removeClass('alert-danger');
+						$('#alertinfo2').removeClass('alert-info');
+					},
+					complete:function(result){
+						$('#processbar2').addClass('hidden');
+					},
+					success: function(data){
+						//console.log(data);
+						if(data.result!=undefined){
+							if(data.result==true){
+								$('#alertinfo2').addClass('alert-success');
+								$('#alertmsg2').html("<strong>Success!</strong> "+data.retMsg);
+								$("a.reload").click();
+								$modal2.modal('hide');
+							}else{
+								$('#alertinfo2').addClass('alert-warning');
+								$('#alertmsg2').html("<strong>Failed!</strong> "+data.retMsg);
+							}
+						}else{
+							$('#alertinfo2').addClass('alert-info');
+							$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						}
+						$('#alertinfo2').removeClass('hidden');
+					},
+					error:function(){
+						$('#alertinfo2').addClass('alert-info');
+						$('#alertmsg2').html("<strong>Error!</strong> System is busy, please try again.");
+						$('#alertinfo2').removeClass('hidden');
+					}
+				});
+            });
+            
+            var $modal3 = $('#static2');
+
+			// handle record edit/remove
+            $('body').on('click', '#btn-addnew', function() {
+              $modal3.modal();   
+            });
+            
+            $modal3.on('hide.bs.modal', function (e) {
+				$('#processbar').addClass('hidden');   
+				$('#alertinfo').addClass('hidden'); 
+			});
+            
+            $modal3.on('hidden.bs.modal', function (e) {
+				$('#processbar').addClass('hidden');   
+				$('#alertinfo').addClass('hidden');
+			});
+        }
+
+    };
+
+}();

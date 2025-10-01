@@ -1,0 +1,16 @@
+[
+    {
+      "name": "dashboardtelkom",
+      "value": "8d11f2d34750d673db5f252e6755f592",
+      "domain": "dashboard.telkom.co.id",
+      "path": "/",
+      "expires": -1,
+      "size": 47,
+      "httpOnly": true,
+      "secure": true,
+      "session": true,
+      "sameParty": false,
+      "sourceScheme": "Secure",
+      "sourcePort": 443
+    }
+  ]

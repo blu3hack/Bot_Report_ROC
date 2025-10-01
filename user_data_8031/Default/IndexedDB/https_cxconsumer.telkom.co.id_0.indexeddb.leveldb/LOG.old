@@ -1,0 +1,37 @@
+2025/01/06-12:30:27.384 d9c Reusing MANIFEST E:\Scrapper\user_data_8031\Default\IndexedDB\https_cxconsumer.telkom.co.id_0.indexeddb.leveldb/MANIFEST-000001
+2025/01/06-12:30:27.394 d9c Recovering log #108
+2025/01/06-12:30:27.395 d9c Reusing old log E:\Scrapper\user_data_8031\Default\IndexedDB\https_cxconsumer.telkom.co.id_0.indexeddb.leveldb/000108.log 
+2025/01/06-12:30:27.395 d9c Delete type=2 #107
+2025/01/06-12:30:27.459 1be0 Level-0 table #113: started
+2025/01/06-12:30:27.472 1be0 Level-0 table #113: 1743 bytes OK
+2025/01/06-12:30:27.474 1be0 Delete type=0 #108
+2025/01/06-12:30:27.475 d9c Manual compaction at level-0 from '\x00,\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00-\x00\x00\x00' @ 0 : 0; will stop at '\x00,\x00\x00\x05' @ 1865 : 1
+2025/01/06-12:30:27.475 d9c Compacting 1@0 + 1@1 files
+2025/01/06-12:30:27.487 d9c Generated table #114@0: 83 keys, 2010 bytes
+2025/01/06-12:30:27.487 d9c Compacted 1@0 + 1@1 files => 2010 bytes
+2025/01/06-12:30:27.489 d9c compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/01/06-12:30:27.489 d9c Delete type=2 #113
+2025/01/06-12:30:27.489 d9c Manual compaction at level-0 from '\x00,\x00\x00\x05' @ 1865 : 1 .. '\x00-\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/01/06-12:30:31.699 d9c Level-0 table #116: started
+2025/01/06-12:30:31.715 d9c Level-0 table #116: 1847 bytes OK
+2025/01/06-12:30:31.716 d9c Delete type=2 #110
+2025/01/06-12:30:31.717 d9c Delete type=0 #112
+2025/01/06-12:30:31.717 d9c Manual compaction at level-0 from '\x00-\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00.\x00\x00\x00' @ 0 : 0; will stop at '\x00-\x00\x00\x05' @ 1908 : 1
+2025/01/06-12:30:31.717 d9c Compacting 1@0 + 1@1 files
+2025/01/06-12:30:31.730 d9c Generated table #117@0: 83 keys, 2002 bytes
+2025/01/06-12:30:31.731 d9c Compacted 1@0 + 1@1 files => 2002 bytes
+2025/01/06-12:30:31.732 d9c compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/01/06-12:30:31.732 d9c Delete type=2 #116
+2025/01/06-12:30:31.733 d9c Manual compaction at level-0 from '\x00-\x00\x00\x05' @ 1908 : 1 .. '\x00.\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/01/06-12:30:46.158 1be0 Manual compaction at level-0 from '\x00.\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00/\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/01/06-12:31:00.050 d9c Level-0 table #119: started
+2025/01/06-12:31:00.066 d9c Level-0 table #119: 3216 bytes OK
+2025/01/06-12:31:00.067 d9c Delete type=2 #114
+2025/01/06-12:31:00.067 d9c Delete type=0 #115
+2025/01/06-12:31:00.068 d9c Manual compaction at level-0 from '\x00/\x00\x00\x00' @ 72057594037927935 : 1 .. '\x000\x00\x00\x00' @ 0 : 0; will stop at '\x00/\x00\x00\x05' @ 1994 : 1
+2025/01/06-12:31:00.068 d9c Compacting 1@0 + 1@1 files
+2025/01/06-12:31:00.081 d9c Generated table #120@0: 83 keys, 2004 bytes
+2025/01/06-12:31:00.081 d9c Compacted 1@0 + 1@1 files => 2004 bytes
+2025/01/06-12:31:00.082 d9c compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/01/06-12:31:00.083 d9c Delete type=2 #119
+2025/01/06-12:31:00.083 d9c Manual compaction at level-0 from '\x00/\x00\x00\x05' @ 1994 : 1 .. '\x000\x00\x00\x00' @ 0 : 0; will stop at (end)

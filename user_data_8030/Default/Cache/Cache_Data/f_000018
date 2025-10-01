@@ -1,0 +1,951 @@
+
+var TbAxDetail = function () {
+
+return {
+//main function to initiate the module
+init: function () {
+	if (!jQuery().dataTable) {
+		return;
+	}
+
+
+
+	// console.log($('#params_dc').val());
+	// console.log($('#params_status').val());
+	// console.log($('#params_target').val());
+	var data = $('#form').serialize();
+
+
+	// begin first table
+	var oTable = $('#graph_table').dataTable({
+		// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+		"aLengthMenu": [
+			[10,50, 200, 500 -1],
+			[10,50, 200, 500, "All"] // change per page values here
+		],
+		"bProcessing": true,
+		"bDeferRender": true,
+		"bLengthChange":false,
+		"bServerSide": true,
+		"sAjaxSource": "/idwifi/public/ajaxdetail/data/all?"+data,
+		// set the initial value
+		"iDisplayLength": 10,
+		"sPaginationType": "bootstrap_full_number",
+		"oLanguage": {
+			"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+			"sLengthMenu": "_MENU_ records",
+			"oPaginate": {
+				"sPrevious": "Prev",
+				"sNext": "Next"
+			},
+			"sSearch": "Search all columns:"
+		},
+		"aoColumnDefs": [{
+			'bSortable': false,
+			'aTargets': [0]
+		}]
+	});
+
+	//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+	//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+	//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+
+
+	//==========
+	var inputval = [];
+	$("#graph_table thead input").keyup(function(e) {
+		var code = (e.keyCode ? e.keyCode : e.which);
+		if (code==13) {
+			inputval[$(this).data('col')] = this.value;
+
+			oTable.fnClearTable(false);
+			oTable.fnFilter( this.value, $(this).data('col'));
+			e.preventDefault();
+		}
+	});
+
+	$('#graph_table thead input').blur(function(){
+		if(inputval[$(this).data('col')] != this.value){
+			inputval[$(this).data('col')] = this.value;
+
+			oTable.fnClearTable(false);
+			oTable.fnFilter( this.value, $(this).data('col'));
+		}
+	});
+
+	$('#graph_table thead input').focus(function(){
+		inputval[$(this).data('col')] = this.value;
+	});
+
+
+
+	$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+		/* Get the DataTables object again - this is not a recreation, just a get of the object */
+		var iCol = parseInt($(this).attr("data-column"));
+		var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+		oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+	});
+	$("button.reload").click( function () {
+		oTable.fnClearTable(false);
+		/* Filter on the column (the index) of this element */
+		oTable.fnDraw();
+	} );
+}
+};
+
+}();
+
+var TbAxDetailWorkflow = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxdetailworkflow/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxdetailworkflow/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			});
+		}
+	};
+}();
+
+var TbAxDetailResume = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxdetailresume/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxdetailresume/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			});
+		}
+	};
+}();
+
+
+var TbAxDetailResumedbs = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table2').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxdetailresumedbs/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxdetailresumedbs/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			});
+		}
+	};
+}();
+
+
+var TbAxCheckOrder = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxco/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxco/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+		            // aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+		            // console.log(typeof(aoData));
+		            aoData.push(...data);
+		            // console.log(aoData);
+		            $.ajax({
+		               "dataType": 'json',
+		               "type": "POST",
+		               "url": sSource,
+		               "data": aoData,
+		               "success": fnCallback
+		            });
+		        },
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			} );
+		}
+	};
+
+}();
+
+
+var TbAxDetailResumeUmur = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxdetailresumeumur/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxdetailresumeumur/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// set the initial value
+				// "sServerMethod": "POST",
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			});
+		}
+	};
+}();
+
+var TbAxDetailResumeVas = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxdetailresumevas/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxdetailresumevas/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			} );
+		}
+	};
+
+}();
+
+var TbAxDetailResumeTrash = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/public/ajaxdetailresumetrash/data/all?"+data,
+				"sAjaxSource": "/idwifi/public/ajaxdetailresumetrash/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			});
+		}
+	};
+}();
+
+var TbAxDetailChurn = function () {
+
+	return {
+		//main function to initiate the module
+		init: function () {
+			if (!jQuery().dataTable) {
+				return;
+			}
+
+			// console.log($('#params_dc').val());
+			// console.log($('#params_status').val());
+			// console.log($('#params_target').val());
+			// var data = $('#form').serialize();
+			var data = $('#form').serializeArray();
+
+			// begin first table
+			var oTable = $('#graph_table').dataTable({
+				// "sDom" : "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", //default layout without horizontal scroll(remove this setting to enable horizontal scroll for the table)
+				"aLengthMenu": [
+					[10,50, 200, 500 -1],
+					[10,50, 200, 500, "All"] // change per page values here
+				],
+				"bProcessing": true,
+				"bDeferRender": true,
+				"bLengthChange":false,
+				"bServerSide": true,
+				// "sAjaxSource": "/idwifi/dashboard/ajaxdetailchurncustomer/data/all?"+data,
+				"sAjaxSource": "/idwifi/dashboard/ajaxdetailchurncustomer/data/all",
+				"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// aoData.push( { "name": "periode", "value": "20230801" }, { "name": "reg", "value": "1" } );
+					// console.log(typeof(aoData));
+					aoData.push(...data);
+					// console.log(aoData);
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				},
+				// "sServerMethod": "POST",
+				// set the initial value
+				"iDisplayLength": 10,
+				"sPaginationType": "bootstrap_full_number",
+				"oLanguage": {
+					"sProcessing": '<i class="fa fa-coffee"></i>&nbsp;Please wait...',
+					"sLengthMenu": "_MENU_ records",
+					"oPaginate": {
+						"sPrevious": "Prev",
+						"sNext": "Next"
+					},
+					"sSearch": "Search all columns:"
+				},
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}]
+			});
+
+			//jQuery('#graph_table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+			//jQuery('#graph_table_wrapper .dataTables_length select').addClass("form-control input-small"); // modify table per page dropdown
+			//jQuery('#graph_table_filter').parent().css({height:'0px'}); // modify table per page dropdown
+
+			//==========
+			var inputval = [];
+			$("#graph_table thead input").keyup(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+					e.preventDefault();
+				}
+			});
+
+			$('#graph_table thead input').blur(function(){
+				if(inputval[$(this).data('col')] != this.value){
+					inputval[$(this).data('col')] = this.value;
+
+					oTable.fnClearTable(false);
+					oTable.fnFilter( this.value, $(this).data('col'));
+				}
+			});
+
+			$('#graph_table thead input').focus(function(){
+				inputval[$(this).data('col')] = this.value;
+			});
+
+			$('#sample_2_column_toggler input[type="checkbox"]').change(function(){
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var iCol = parseInt($(this).attr("data-column"));
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+			});
+
+			$("button.reload").click( function () {
+				oTable.fnClearTable(false);
+				/* Filter on the column (the index) of this element */
+				oTable.fnDraw();
+			} );
+		}
+	};
+}();

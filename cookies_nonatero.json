@@ -1,0 +1,60 @@
+[
+  {
+    "name": "bihun",
+    "value": "1",
+    "domain": "assurance.telkom.co.id",
+    "path": "/",
+    "expires": 1731741955,
+    "size": 6,
+    "httpOnly": false,
+    "secure": false,
+    "session": false,
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "pkey",
+    "value": "6",
+    "domain": "assurance.telkom.co.id",
+    "path": "/",
+    "expires": 1731741955,
+    "size": 5,
+    "httpOnly": false,
+    "secure": false,
+    "session": false,
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "cookie_acti",
+    "value": "ce04c7a0c5976b542c78229f6e5ea9d5",
+    "domain": "assurance.telkom.co.id",
+    "path": "/",
+    "expires": 1729153552.4201,
+    "size": 43,
+    "httpOnly": true,
+    "secure": true,
+    "session": false,
+    "sameSite": "Strict",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "PHPSESSID",
+    "value": "9fu264cdi7898s40edmcjhm204",
+    "domain": "assurance.telkom.co.id",
+    "path": "/",
+    "expires": -1,
+    "size": 35,
+    "httpOnly": true,
+    "secure": true,
+    "session": true,
+    "sameSite": "Strict",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  }
+]
