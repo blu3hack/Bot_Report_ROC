@@ -1,0 +1,10 @@
+===== langkah-langkah git =====
+1. buat repository di github seperti biasa
+2. masuk ke directory folder lokal lalu ketik : git init
+2. git add . (menambahkan semua file project ke staging area)
+4. git status (cek dulu statusnya)
+5. git commit -m "tambahkan pesan keterangan"
+6. git remote add origin "https://github.com/blu3hack/Telegram_bot.git"
+7. disini akan diminta untuk login ke akun github kita
+8. login seperti biasa.
+9. git push
