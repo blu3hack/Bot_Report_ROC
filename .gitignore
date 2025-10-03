@@ -1,2 +1,6 @@
 # Node modules
 node_modules/
+login.js
+db_connection.js
+connection.js
+*.csv

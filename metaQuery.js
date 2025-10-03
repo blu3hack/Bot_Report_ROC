@@ -1,7 +1,9 @@
-import mysql from 'mysql2/promise';
-import fs from 'fs';
-import csv from 'csv-parser';
-import { insertDate } from './currentDate.js';
+const mysql = require('mysql2/promise');
+const fs = require('fs');
+const { insertDate } = require('./currentDate.js');
+
+// Contoh pakai insertDate
+console.log('Tanggal insert:', insertDate);
 
 async function main() {
   const connection = await mysql.createConnection({
@@ -40,7 +42,7 @@ async function main() {
     UNION ALL
     SELECT 'FFM-WHF-TTR Fulfillment Guarantee Compliance' AS kpi, sc_lokasi.witel AS lokasi, ff_ih.jenis AS Area, ff_ih.ttr_ffg AS Realisasi FROM sc_lokasi LEFT JOIN ff_ih ON sc_lokasi.witel = ff_ih.lokasi AND ff_ih.tgl = '${tgl}' AND ff_ih.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
     UNION ALL
-    SELECT 'ASR-ENT-TTR Compliance K1 DATIN 1.5 Jam' AS kpi, sc_lokasi.witel AS lokasi, ttr_datin.jenis AS Area, ttr_datin.k1 AS Realisasi FROM sc_lokasi LEFT JOIN ttr_datin ON sc_lokasi.witel = ttr_datin.treg AND ttr_datin.tgl = '${tgl}' AND ttr_datin.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
+    SELECT 'ASR-ENT-TTR Compliance K1 DATIN 1,5 Jam' AS kpi, sc_lokasi.witel AS lokasi, ttr_datin.jenis AS Area, ttr_datin.k1 AS Realisasi FROM sc_lokasi LEFT JOIN ttr_datin ON sc_lokasi.witel = ttr_datin.treg AND ttr_datin.tgl = '${tgl}' AND ttr_datin.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
     UNION ALL
     SELECT 'ASR-ENT-TTR Compliance K2 dan K1 Repair DATIN 3.6 Jam' AS kpi, sc_lokasi.witel AS lokasi, ttr_datin.jenis AS Area, ttr_datin.k2 AS Realisasi FROM sc_lokasi LEFT JOIN ttr_datin ON sc_lokasi.witel = ttr_datin.treg AND ttr_datin.tgl = '${tgl}' AND ttr_datin.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
     UNION ALL
@@ -104,7 +106,7 @@ async function main() {
       UNION ALL
       SELECT 'FFM-WHF-TTR Fulfillment Guarantee Compliance' AS kpi, sc_lokasi.witel AS lokasi, ff_ih.jenis AS Area, ff_ih.ttr_ffg AS Realisasi FROM sc_lokasi LEFT JOIN ff_ih ON sc_lokasi.witel = ff_ih.lokasi AND ff_ih.tgl = '${tgl}' AND ff_ih.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
       UNION ALL
-      SELECT 'ASR-ENT-TTR Compliance K1 DATIN 1.5 Jam' AS kpi, sc_lokasi.witel AS lokasi, ttr_datin.jenis AS Area, ttr_datin.k1 AS Realisasi FROM sc_lokasi LEFT JOIN ttr_datin ON sc_lokasi.witel = ttr_datin.treg AND ttr_datin.tgl = '${tgl}' AND ttr_datin.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
+      SELECT 'ASR-ENT-TTR Compliance K1 DATIN 1,5 Jam' AS kpi, sc_lokasi.witel AS lokasi, ttr_datin.jenis AS Area, ttr_datin.k1 AS Realisasi FROM sc_lokasi LEFT JOIN ttr_datin ON sc_lokasi.witel = ttr_datin.treg AND ttr_datin.tgl = '${tgl}' AND ttr_datin.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
       UNION ALL
       SELECT 'ASR-ENT-TTR Compliance K2 dan K1 Repair DATIN 3.6 Jam' AS kpi, sc_lokasi.witel AS lokasi, ttr_datin.jenis AS Area, ttr_datin.k2 AS Realisasi FROM sc_lokasi LEFT JOIN ttr_datin ON sc_lokasi.witel = ttr_datin.treg AND ttr_datin.tgl = '${tgl}' AND ttr_datin.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
       UNION ALL 
@@ -165,16 +167,9 @@ async function main() {
         if (row.lokasi === 'NUSA TENGGARA') {
           newRow = { ...row, lokasi: 'D_NUSRA' };
         } else if (row.lokasi?.includes('TERRITORY')) {
-          newRow = {
-            ...row,
-            lokasi: row.lokasi.replace('TERRITORY', 'TIF'),
-          };
-        } else if (!row.lokasi?.includes('TERRITORY')) {
-          newRow = { ...row, lokasi: `D_${row.lokasi}` };
-        } else if (!row.lokasi?.includes('TERRITORY')) {
-          newRow = { ...row, lokasi: `D_${row.lokasi}` };
+          newRow = { ...row, lokasi: row.lokasi.replace('TERRITORY', 'TIF') };
         } else {
-          newRow = { ...row };
+          newRow = { ...row, lokasi: `D_${row.lokasi}` };
         }
 
         if (lokasi_dis.includes(newRow.lokasi)) {
@@ -190,12 +185,17 @@ async function main() {
         };
       }
 
+      // Pastikan Realisasi selalu ada (isi angka atau strip)
+      if (row.Realisasi === null || row.Realisasi === undefined || row.Realisasi === '') {
+        newRow.Realisasi = '-';
+      }
+
       // Susun ulang kolom dan tambahkan insert_at
       return {
         kpi: newRow.kpi ?? '',
         lokasi: newRow.Area ?? '',
         Area: newRow.lokasi ?? '',
-        Realisasi: newRow.Realisasi ?? '',
+        Realisasi: newRow.Realisasi ?? '-',
         insert_at: insertDate,
         bulan: month,
       };
@@ -211,11 +211,12 @@ async function main() {
       .map((row) =>
         Object.entries(row)
           .map(([key, val]) => {
-            if (val == null || val === '') return '';
-
             if (key === 'Realisasi') {
+              if (val === '-' || val == null || val === '') {
+                return '"-"';
+              }
               const num = parseFloat(val);
-              return isNaN(num) ? '' : num.toFixed(2);
+              return isNaN(num) ? '"-"' : num.toFixed(2);
             }
 
             if (key === 'bulan') {
@@ -234,8 +235,6 @@ async function main() {
     // Simpan file CSV
     const dir = 'loaded_file/msa_upload';
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-    fs.writeFileSync(namaFile, csv, 'utf-8');
     fs.writeFileSync(`${dir}/${namaFile}`, csv, 'utf-8');
     console.log(`✅ File ${namaFile} berhasil dibuat.`);
   }
@@ -258,7 +257,7 @@ async function main() {
   // Contoh pemakaian
   simpanCSV(tif, 'tif.csv');
   simpanCSV(district, 'district.csv');
-  gabungCSV('tif.csv', 'district.csv', 'loaded_file/msa_upload/msa_upload.csv');
+  // gabungCSV('tif.csv', 'district.csv', 'loaded_file/msa_upload/msa_upload.csv');
   await connection.end();
 }
 

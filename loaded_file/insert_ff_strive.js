@@ -25,6 +25,7 @@ async function deleteData() {
 function insert_ff(jenis, fromTable, finalTable) {
   return new Promise((resolve, reject) => {
     const today = currentDate;
+    console.log(today);
 
     connection.query(`SELECT lokasi, tti_real, ffg_real, ttr_ffg_real FROM ${fromTable} GROUP BY lokasi`, (error, rows) => {
       if (error) {

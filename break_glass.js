@@ -2,20 +2,10 @@
 const TelegramBot = require('node-telegram-bot-api');
 const mysql = require('mysql');
 const { spawn } = require('child_process');
-const path = require('path');
+const pool = require('./connection');
+const { token } = require('./login');
 
-// === KONFIG TELEGRAM BOT ===
-const token = '7235593002:AAGjkzbxH-fCUYBXV6qXFoKGocUHIkh4XRo';
 const bot = new TelegramBot(token, { polling: true });
-
-// === KONFIG DATABASE ===
-const pool = mysql.createPool({
-  host: '10.110.13.43',
-  user: 'cxmention',
-  password: 'tr5ju4r4#',
-  database: 'perf_tif',
-  connectionLimit: 10,
-});
 
 // Test koneksi database
 pool.getConnection((err, conn) => {

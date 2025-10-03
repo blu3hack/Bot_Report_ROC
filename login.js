@@ -8,6 +8,7 @@ const user_wifi = 'rocreg5';
 const pass_wifi = 'telkom654';
 const username_care = '920264';
 const password_care = 'Gunatama108';
+const token = '7235593002:AAGjkzbxH-fCUYBXV6qXFoKGocUHIkh4XRo';
 
 module.exports = {
   user: username,
@@ -20,4 +21,5 @@ module.exports = {
   pass_wifi: pass_wifi,
   user_care: username_care,
   pass_care: password_care,
+  token: token,
 };
