@@ -1,18 +1,12 @@
 const mysql = require('mysql2/promise');
 const fs = require('fs');
 const { insertDate } = require('./currentDate.js');
+const pool = require('./connection');
 
 // Contoh pakai insertDate
 console.log('Tanggal insert:', insertDate);
 
 async function main() {
-  const connection = await mysql.createConnection({
-    host: '10.110.13.43',
-    user: 'cxmention',
-    password: 'tr5ju4r4#',
-    database: 'perf_tif',
-  });
-
   // --- Query pertama ---
   const tgl = insertDate;
   const bulan = tgl.split('-')[1]; // "09"
@@ -149,8 +143,8 @@ async function main() {
     SELECT 'FFM-ENT-Underspec Warranty Guarantee HSI' AS kpi, sc_lokasi.witel AS lokasi, ff_hsi.jenis AS Area, ff_hsi.unspec AS Realisasi FROM sc_lokasi LEFT JOIN ff_hsi ON sc_lokasi.witel = ff_hsi.lokasi AND ff_hsi.tgl = '${tgl}' AND ff_hsi.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
   `;
 
-  const [tif] = await connection.execute(sqltif);
-  const [district] = await connection.execute(sqldistrict);
+  const [tif] = await pool.execute(sqltif);
+  const [district] = await pool.execute(sqldistrict);
 
   function simpanCSV(dataRows, namaFile) {
     if (dataRows.length === 0) {
@@ -239,26 +233,11 @@ async function main() {
     console.log(`✅ File ${namaFile} berhasil dibuat.`);
   }
 
-  function gabungCSV(file1, file2, outputFile) {
-    const csv1 = fs.readFileSync(file1, 'utf-8').trim();
-    const csv2 = fs.readFileSync(file2, 'utf-8').trim();
-
-    // Pisahkan baris agar bisa abaikan header kedua
-    const [header1, ...rows1] = csv1.split('\n');
-    const [header2, ...rows2] = csv2.split('\n');
-
-    // Gabungkan: header dari file pertama, lalu isi dari kedua file
-    const gabungan = [header1, ...rows1, ...rows2].join('\n');
-
-    fs.writeFileSync(outputFile, gabungan, 'utf-8');
-    console.log(`✅ File ${outputFile} berhasil dibuat`);
-  }
-
   // Contoh pemakaian
   simpanCSV(tif, 'tif.csv');
   simpanCSV(district, 'district.csv');
   // gabungCSV('tif.csv', 'district.csv', 'loaded_file/msa_upload/msa_upload.csv');
-  await connection.end();
+  await pool.end();
 }
 
 main().catch(console.error);
