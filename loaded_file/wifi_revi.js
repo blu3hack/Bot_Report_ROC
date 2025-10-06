@@ -136,6 +136,27 @@ function deleteAllData() {
     });
   });
 }
+function deleteDuplicates() {
+  return new Promise((resolve, reject) => {
+    const currentDate = insertDate;
+    const sql = `
+      DELETE t1
+      FROM wifi_revi t1
+      JOIN wifi_revi t2
+        ON t1.regional = t2.regional
+      WHERE 
+        t1.comply = '-'
+        AND t2.comply <> '-'
+         AND t1.tgl = ?
+    `;
+
+    connection.query(sql, [currentDate], (err, result) => {
+      if (err) return reject(err);
+      console.log(`✅ Berhasil menghapus ${result.affectedRows} baris dari wifi_revi untuk tanggal ${currentDate}.`);
+      resolve();
+    });
+  });
+}
 
 // Menjalankan semua fungsi secara berurutan
 async function run() {
@@ -145,6 +166,7 @@ async function run() {
     await deleteDataByCondition();
     await insert_data();
     await deleteAllData();
+    // await deleteDuplicates();
   } catch (err) {
     console.error('Terjadi kesalahan:', err);
   } finally {

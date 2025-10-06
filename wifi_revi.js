@@ -283,17 +283,17 @@ const OUTPUT_DIR = path.join(__dirname, 'loaded_file/wifi_revi');
 
     await wifi_revi();
 
-    await av_wifi(1, 1, 'av_all_reg');
-    await av_wifi(1, 2, 'av_ms_reg');
-    await av_wifi(1, 3, 'av_basic_reg');
+    // await av_wifi(1, 1, 'av_all_reg');
+    // await av_wifi(1, 2, 'av_ms_reg');
+    // await av_wifi(1, 3, 'av_basic_reg');
 
-    await av_wifi(5, 1, 'av_all_tr4');
-    await av_wifi(5, 2, 'av_ms_tr4');
-    await av_wifi(5, 3, 'av_basic_tr4');
+    // await av_wifi(5, 1, 'av_all_tr4');
+    // await av_wifi(5, 2, 'av_ms_tr4');
+    // await av_wifi(5, 3, 'av_basic_tr4');
 
-    await av_wifi(6, 1, 'av_all_tr5');
-    await av_wifi(6, 2, 'av_ms_tr5');
-    await av_wifi(6, 3, 'av_basic_tr5');
+    // await av_wifi(6, 1, 'av_all_tr5');
+    // await av_wifi(6, 2, 'av_ms_tr5');
+    // await av_wifi(6, 3, 'av_basic_tr5');
 
     // tombol
     async function tombol() {
