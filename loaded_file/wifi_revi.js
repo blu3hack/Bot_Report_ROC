@@ -83,7 +83,7 @@ function deleteDataByCondition() {
 function insert_data() {
   return new Promise((resolve, reject) => {
     const currentDate = insertDate;
-    const deleteQuery = 'DELETE FROM wifi_revi WHERE tgl = ?';
+    const deleteQuery = 'DELETE FROM wifi_revi_test WHERE tgl = ?';
 
     connection.query(deleteQuery, [currentDate], (err, results) => {
       if (err) return reject(err);
@@ -98,7 +98,7 @@ function insert_data() {
           return resolve();
         }
 
-        const insertQuery = 'INSERT INTO wifi_revi (tgl, jenis, regional, comply) VALUES ?';
+        const insertQuery = 'INSERT INTO wifi_revi_test (tgl, jenis, regional, comply) VALUES ?';
         const lokasiMapping = {
           'JATIM BARAT': 'MALANG',
           'JATIM TIMUR': 'SIDOARJO',
@@ -136,23 +136,31 @@ function deleteAllData() {
     });
   });
 }
-function deleteDuplicates() {
+function deleteDuplicates(jenis) {
   return new Promise((resolve, reject) => {
     const currentDate = insertDate;
     const sql = `
-      DELETE t1
-      FROM wifi_revi t1
-      JOIN wifi_revi t2
-        ON t1.regional = t2.regional
-      WHERE 
-        t1.comply = '-'
-        AND t2.comply <> '-'
-         AND t1.tgl = ?
+      DELETE FROM wifi_revi_test
+      WHERE id NOT IN (
+        SELECT * FROM (
+          SELECT MIN(id) AS keep_id
+          FROM wifi_revi_test
+          WHERE tgl = ?
+            AND jenis = ?
+            AND regional = 'MALANG'
+            AND comply = '-'
+          GROUP BY regional, comply
+        ) AS keep_ids
+      )
+      AND tgl = ?
+      AND jenis = ?
+      AND regional = 'MALANG'
+      AND comply = '-'
     `;
 
-    connection.query(sql, [currentDate], (err, result) => {
+    connection.query(sql, [currentDate, jenis, currentDate, jenis], (err, result) => {
       if (err) return reject(err);
-      console.log(`✅ Berhasil menghapus ${result.affectedRows} baris dari wifi_revi untuk tanggal ${currentDate}.`);
+      console.log(`✅ Berhasil menghapus ${result.affectedRows} baris duplikat untuk MALANG (${jenis}) pada tanggal ${currentDate}.`);
       resolve();
     });
   });
@@ -166,7 +174,8 @@ async function run() {
     await deleteDataByCondition();
     await insert_data();
     await deleteAllData();
-    // await deleteDuplicates();
+    await deleteDuplicates('tif');
+    await deleteDuplicates('reg');
   } catch (err) {
     console.error('Terjadi kesalahan:', err);
   } finally {
