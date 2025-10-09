@@ -8,7 +8,7 @@ const { insertDate } = require('../currentDate');
 
 // Fungsi untuk menghapus data pada tanggal saat ini
 function deleteExistingData() {
-  const tableForDelete = ['ffg_non_hsi', 'ttr_ffg_non_hsi', 'ttd_non_hsi', 'ttd_wifi'];
+  const tableForDelete = ['provcomp', 'provcomp_wifi'];
   const currentDate = insertDate;
 
   tableForDelete.forEach((table) => {
@@ -32,18 +32,14 @@ function inputDataToDatabase(file, insertToTable, jenis) {
       const witel = data[Object.keys(data)[0]] || '';
 
       let real = '';
-
-      if (insertToTable == 'ttd_non_hsi' || insertToTable == 'ttd_wifi') {
-        real = data[Object.keys(data)[4]] || '';
-      } else {
-        avg = data[Object.keys(data)[1]] || '';
-        jml = data[Object.keys(data)[2]] || '';
-        if (avg == 0 || jml == 0) {
-          real = 100;
-        } else {
-          real = data[Object.keys(data)[3]] || '';
-        }
-      }
+      // avg = data[Object.keys(data)[1]] || '';
+      // jml = data[Object.keys(data)[2]] || '';
+      // if (avg == 0 || jml == 0) {
+      //   real = 100;
+      // } else {
+      //   real = data[Object.keys(data)[0]] || '';
+      // }
+      real = data[Object.keys(data)[5]] || '';
 
       let newWitel = '';
 
@@ -90,29 +86,17 @@ function deleteUnwantedRows(table) {
 
 // Jalankan fungsi
 deleteExistingData();
-inputDataToDatabase('ffg_tif', 'ffg_non_hsi', 'tif');
-inputDataToDatabase('ffg_district', 'ffg_non_hsi', 'tif');
-inputDataToDatabase('ffg_reg', 'ffg_non_hsi', 'reg');
-inputDataToDatabase('ffg_reg4', 'ffg_non_hsi', 'reg');
-inputDataToDatabase('ffg_reg5', 'ffg_non_hsi', 'reg');
+inputDataToDatabase('provcomp_tif', 'provcomp', 'tif');
+inputDataToDatabase('provcomp_district', 'provcomp', 'tif');
+inputDataToDatabase('provcomp_reg', 'provcomp', 'reg');
+inputDataToDatabase('provcomp_reg4', 'provcomp', 'reg');
+inputDataToDatabase('provcomp_reg5', 'provcomp', 'reg');
 
-inputDataToDatabase('ttr_ffg_tif', 'ttr_ffg_non_hsi', 'tif');
-inputDataToDatabase('ttr_ffg_district', 'ttr_ffg_non_hsi', 'tif');
-inputDataToDatabase('ttr_ffg_reg', 'ttr_ffg_non_hsi', 'reg');
-inputDataToDatabase('ttr_ffg_reg4', 'ttr_ffg_non_hsi', 'reg');
-inputDataToDatabase('ttr_ffg_reg5', 'ttr_ffg_non_hsi', 'reg');
-
-inputDataToDatabase('ttdc_tif', 'ttd_non_hsi', 'tif');
-inputDataToDatabase('ttdc_district', 'ttd_non_hsi', 'tif');
-inputDataToDatabase('ttdc_reg', 'ttd_non_hsi', 'reg');
-inputDataToDatabase('ttdc_reg4', 'ttd_non_hsi', 'reg');
-inputDataToDatabase('ttdc_reg5', 'ttd_non_hsi', 'reg');
-
-inputDataToDatabase('ttdc_wifi_tif', 'ttd_wifi', 'tif');
-inputDataToDatabase('ttdc_wifi_district', 'ttd_wifi', 'tif');
-inputDataToDatabase('ttdc_wifi_reg', 'ttd_wifi', 'reg');
-inputDataToDatabase('ttdc_wifi_reg4', 'ttd_wifi', 'reg');
-inputDataToDatabase('ttdc_wifi_reg5', 'ttd_wifi', 'reg');
+inputDataToDatabase('provcomp_wifi_tif', 'provcomp_wifi', 'tif');
+inputDataToDatabase('provcomp_wifi_district', 'provcomp_wifi', 'tif');
+inputDataToDatabase('provcomp_wifi_reg', 'provcomp_wifi', 'reg');
+inputDataToDatabase('provcomp_wifi_reg4', 'provcomp_wifi', 'reg');
+inputDataToDatabase('provcomp_wifi_reg5', 'provcomp_wifi', 'reg');
 
 // Tutup koneksi setelah semua query selesai
 setTimeout(() => {

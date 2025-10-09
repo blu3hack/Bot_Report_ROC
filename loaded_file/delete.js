@@ -1,4 +1,4 @@
-const connection = require('./connection');
+// const connection = require('./connection');
 const fs = require('fs');
 const path = require('path');
 
@@ -69,4 +69,4 @@ clearFolder('./wifi_revi');
 clearFolder('./cnop');
 clearFolder('./ps_re');
 clearFolder('./msa_upload');
-deleteTables();
+// deleteTables();
