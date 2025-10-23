@@ -23,10 +23,9 @@ const { exec } = require('child_process');
     // mbil cpacha dari database
     function getData() {
       return new Promise((resolve, reject) => {
-        const query = "SELECT pesan FROM get_otp_for_download WHERE pesan LIKE '%cpt%' ORDER BY id DESC LIMIT 1";
-        pool.query(query, (err, results) => {
-          if (err) return reject(err);
-          resolve(results);
+        exec('python otp_newexpro.py', (error, stdout, stderr) => {
+          if (error || stderr) return reject(error || stderr);
+          resolve(stdout.trim());
         });
       });
     }
@@ -37,12 +36,12 @@ const { exec } = require('child_process');
     await page.type('#password', pass);
 
     await page.waitForTimeout(10000);
-    // const result = await getData();
-    // const pesan = result[0].pesan; // contoh: "cpt azp"
-    // const parts = pesan.split(' ');
-    // const captcha = parts[1] || null; // ambil kata setelah "cpt"
-    // console.log(captcha);
-    // await page.type('#captcha_val', String(captcha)); // pastikan string
+    const result = await getData();
+    const pesan = result[0].pesan; // contoh: "cpt azp"
+    const parts = pesan.split(' ');
+    const captcha = parts[1] || null; // ambil kata setelah "cpt"
+    console.log(captcha);
+    await page.type('#captcha_val', String(captcha)); // pastikan string
 
     const checkboxSelector = '[name="terms"]';
     if (await page.$(checkboxSelector)) {
@@ -54,47 +53,47 @@ const { exec } = require('child_process');
     // console.log('Masukkan OTP secara Manual dan tunggu sebentar');
 
     // input otp secara manual
-    // await page.waitForTimeout(10000);
-    // async function insertOTP() {
-    //   const result = await getData();
-    //   const pesan = result[0].pesan; // contoh: "cpt azp"
-    //   const parts = pesan.split(' ');
-    //   const captcha = parts[1] || null; // ambil kata setelah "cpt"
-    //   console.log(captcha);
-    //   const code_otp = await captcha;
-    //   const code1 = Math.floor(code_otp / 100000) % 10;
-    //   const code2 = Math.floor(code_otp / 10000) % 10;
-    //   const code3 = Math.floor(code_otp / 1000) % 10;
-    //   const code4 = Math.floor(code_otp / 100) % 10;
-    //   const code5 = Math.floor(code_otp / 10) % 10;
-    //   const code6 = code_otp % 10;
+    await page.waitForTimeout(10000);
+    async function insertOTP() {
+      const result = await getData();
+      const pesan = result[0].pesan; // contoh: "cpt azp"
+      const parts = pesan.split(' ');
+      const captcha = parts[1] || null; // ambil kata setelah "cpt"
+      console.log(captcha);
+      const code_otp = await captcha;
+      const code1 = Math.floor(code_otp / 100000) % 10;
+      const code2 = Math.floor(code_otp / 10000) % 10;
+      const code3 = Math.floor(code_otp / 1000) % 10;
+      const code4 = Math.floor(code_otp / 100) % 10;
+      const code5 = Math.floor(code_otp / 10) % 10;
+      const code6 = code_otp % 10;
 
-    //   console.log(code1, code2, code3, code4, code5, code6);
+      console.log(code1, code2, code3, code4, code5, code6);
 
-    //   await page.type('#formZ_ > div.mb-6 > div > input:nth-child(1)', code1.toString());
-    //   await page.waitForTimeout(50);
+      await page.type('#formZ_ > div.mb-6 > div > input:nth-child(1)', code1.toString());
+      await page.waitForTimeout(50);
 
-    //   await page.type('#formZ_ > div.mb-6 > div > input:nth-child(2)', code2.toString());
-    //   await page.waitForTimeout(50);
+      await page.type('#formZ_ > div.mb-6 > div > input:nth-child(2)', code2.toString());
+      await page.waitForTimeout(50);
 
-    //   await page.type('#formZ_ > div.mb-6 > div > input:nth-child(3)', code3.toString());
-    //   await page.waitForTimeout(50);
+      await page.type('#formZ_ > div.mb-6 > div > input:nth-child(3)', code3.toString());
+      await page.waitForTimeout(50);
 
-    //   await page.type('#formZ_ > div.mb-6 > div > input:nth-child(4)', code4.toString());
-    //   await page.waitForTimeout(50);
+      await page.type('#formZ_ > div.mb-6 > div > input:nth-child(4)', code4.toString());
+      await page.waitForTimeout(50);
 
-    //   await page.type('#formZ_ > div.mb-6 > div > input:nth-child(5)', code5.toString());
-    //   await page.waitForTimeout(50);
+      await page.type('#formZ_ > div.mb-6 > div > input:nth-child(5)', code5.toString());
+      await page.waitForTimeout(50);
 
-    //   await page.type('#formZ_ > div.mb-6 > div > input:nth-child(6)', code6.toString());
-    //   await page.waitForTimeout(50);
+      await page.type('#formZ_ > div.mb-6 > div > input:nth-child(6)', code6.toString());
+      await page.waitForTimeout(50);
 
-    //   // Klik tombol login
-    //   await page.click('#aktivasiButton');
-    //   await page.waitForNavigation();
-    // }
+      // Klik tombol login
+      await page.click('#aktivasiButton');
+      await page.waitForNavigation();
+    }
 
-    // await insertOTP();
+    await insertOTP();
 
     await page.waitForTimeout(10000);
     console.log('Berhasil login ke NewXPro');

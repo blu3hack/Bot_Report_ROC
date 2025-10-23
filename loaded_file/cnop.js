@@ -6,7 +6,7 @@ const { insertDate } = require('../currentDate');
 
 // Hapus data dengan tanggal hari ini
 function deleteExistingData() {
-  const tableForDelete = ['cnop_critical', 'cnop_latency'];
+  const tableForDelete = ['cnop_critical', 'cnop_latency', 'cnop_premium'];
   const currentDate = insertDate;
 
   tableForDelete.forEach((table) => {
@@ -31,6 +31,7 @@ function inputDataToDatabase(kpi, file, insertToTable) {
       let area = data[Object.keys(data)[2]] || '';
       let cnop_critical = data[Object.keys(data)[6]] || '';
       let cnop_latency = data[Object.keys(data)[7]] || '';
+      let cnop_premium = data[Object.keys(data)[8]] || '';
 
       const tgl = currentDate;
 
@@ -38,15 +39,15 @@ function inputDataToDatabase(kpi, file, insertToTable) {
 
       if (insertToTable == 'cnop_critical') {
         connection.query(query, [kpi, area, lokasi, cnop_critical, tgl], (err) => {
-          if (err) {
-            console.error('Error inserting data:', err);
-          }
+          if (err) console.error('Error inserting data:', err);
+        });
+      } else if (insertToTable == 'cnop_premium') {
+        connection.query(query, [kpi, area, lokasi, cnop_premium, tgl], (err) => {
+          if (err) console.error('Error inserting data:', err);
         });
       } else {
         connection.query(query, [kpi, area, lokasi, cnop_latency, tgl], (err) => {
-          if (err) {
-            console.error('Error inserting data:', err);
-          }
+          if (err) console.error('Error inserting data:', err);
         });
       }
     })
@@ -76,6 +77,7 @@ function deleteUnwantedRows(table) {
 deleteExistingData();
 inputDataToDatabase('ONM-WHM-Latency RAN to Core', 'PI Laten - TIF3 MSO 2025(MAIN_VAR_CNOP)', 'cnop_latency');
 inputDataToDatabase('ASR-WHM-MTTRi Critical Compliance', 'PI Laten - TIF3 MSO 2025(MAIN_VAR_CNOP)', 'cnop_critical');
+inputDataToDatabase('ASR-WHM-MTTRi Critical Premium', 'PI Laten - TIF3 MSO 2025(MAIN_VAR_CNOP)', 'cnop_premium');
 
 // Tutup koneksi DB setelah semua proses selesai
 setTimeout(() => {
