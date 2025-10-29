@@ -4,20 +4,27 @@ const csv = require('csv-parser');
 const connection = require('./connection');
 const { insertDate } = require('../currentDate');
 
-// Buat koneksi ke database
-
 // Fungsi untuk menghapus data pada tanggal saat ini
 function deleteExistingData() {
-  // const tableForDelete = ['wsa_sugar_strive'];
-  const tableForDelete = ['wsa_sugar', 'wsa_service', 'wsa_ttr3', 'wsa_ttr6', 'wsa_ttr36', 'wsa_ttrmanja'];
-  const currentDate = insertDate;
+  return new Promise((resolve, reject) => {
+    const tableForDelete = ['wsa_sugar', 'wsa_service', 'wsa_ttr3', 'wsa_ttr6', 'wsa_ttr36', 'wsa_ttrmanja'];
+    const currentDate = insertDate;
 
-  tableForDelete.forEach((table) => {
-    const sql = `DELETE FROM ${table} WHERE tgl = ?`;
-    connection.query(sql, [currentDate], (err, results) => {
-      if (err) {
-        console.error(`Error deleting data from ${table}:`, err);
-      }
+    let count = 0;
+
+    tableForDelete.forEach((table) => {
+      const sql = `DELETE FROM ${table}`;
+      connection.query(sql, [currentDate], (err) => {
+        if (err) {
+          console.error(`Error deleting data from ${table}:`, err);
+          reject(err);
+        } else {
+          count++;
+          if (count === tableForDelete.length) {
+            resolve(); // Selesai menghapus
+          }
+        }
+      });
     });
   });
 }
@@ -26,10 +33,13 @@ function deleteExistingData() {
 function inputDataToDatabase(file, jenis, insertToTable) {
   return new Promise((resolve, reject) => {
     const filePath = path.join(__dirname, 'wsa_gamas', `${file}.csv`);
+    const tgl = insertDate;
+
+    const rows = [];
+
     fs.createReadStream(filePath)
       .pipe(csv())
       .on('data', (data) => {
-        const tgl = insertDate;
         const witel = data[Object.keys(data)[0]] || '';
         const m01 = data[Object.keys(data)[1]] || '';
         const m02 = data[Object.keys(data)[2]] || '';
@@ -46,20 +56,22 @@ function inputDataToDatabase(file, jenis, insertToTable) {
 
         const newWitel = witel.replace('TERITORY', 'TERRITORY');
 
-        const query = `INSERT INTO ${insertToTable} 
-          (tgl, lokasi, witel, m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12) 
-          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-
-        connection.query(query, [tgl, jenis, newWitel, m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12], (err) => {
-          if (err) {
-            console.error('Error inserting data:', err);
-          }
-        });
+        rows.push([tgl, jenis, newWitel, m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12]);
       })
       .on('end', () => {
-        console.log(`${file} berhasil diinput ke tabel ${insertToTable}`);
-        deleteUnwantedRows(insertToTable);
-        resolve(); // selesai → lanjut ke berikutnya
+        const query = `INSERT INTO ${insertToTable} 
+          (tgl, lokasi, witel, m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12) 
+          VALUES ?`;
+
+        connection.query(query, [rows], (err) => {
+          if (err) {
+            console.error('Error inserting data:', err);
+            reject(err);
+          } else {
+            console.log(`${file} berhasil diinput ke tabel ${insertToTable}`);
+            deleteUnwantedRows(insertToTable).then(resolve).catch(reject);
+          }
+        });
       })
       .on('error', (err) => {
         console.error('Gagal membuka file CSV:', err);
@@ -70,98 +82,102 @@ function inputDataToDatabase(file, jenis, insertToTable) {
 
 // Fungsi untuk menghapus data yang tidak diperlukan
 function deleteUnwantedRows(table) {
-  const deleteWitelValues = ['TOTAL', 'TARGET'];
-  deleteWitelValues.forEach((value) => {
-    const sql = `DELETE FROM ${table} WHERE witel = ?`;
-    connection.query(sql, [value], (err) => {
-      if (err) {
-        console.error(`Error deleting ${value} from ${table}:`, err);
-      }
+  return new Promise((resolve, reject) => {
+    const deleteWitelValues = ['TOTAL', 'TARGET'];
+    let count = 0;
+
+    deleteWitelValues.forEach((value) => {
+      const sql = `DELETE FROM ${table} WHERE witel = ?`;
+      connection.query(sql, [value], (err) => {
+        if (err) {
+          console.error(`Error deleting ${value} from ${table}:`, err);
+          reject(err);
+        } else {
+          count++;
+          if (count === deleteWitelValues.length) {
+            resolve();
+          }
+        }
+      });
     });
   });
 }
 
-// Jalankan fungsi
+// Fungsi untuk memasukkan data dari CSV ke database
+async function run() {
+  try {
+    await deleteExistingData();
+    const files = [
+      // Service
+      ['service_tif', 'tif', 'wsa_service'],
+      ['service_district_tif3', 'tif', 'wsa_service'],
+      ['service_nas', 'reg', 'wsa_service'],
+      ['service_tr4', 'reg', 'wsa_service'],
+      ['service_tr5', 'reg5', 'wsa_service'],
+      ['service_area', 'area', 'wsa_service_nop'],
+      ['service_balnus', 'tif', 'wsa_service_nop'],
+      ['service_jateng', 'reg', 'wsa_service_nop'],
+      ['service_jatim', 'reg', 'wsa_service_nop'],
+      // sugar
+      ['sugar_tif', 'tif', 'wsa_sugar'],
+      ['sugar_district_tif3', 'tif', 'wsa_sugar'],
+      ['sugar_nas', 'reg', 'wsa_sugar'],
+      ['sugar_tr4', 'reg', 'wsa_sugar'],
+      ['sugar_tr5', 'reg5', 'wsa_sugar'],
+      ['sugar_area', 'area', 'wsa_sugar_nop'],
+      ['sugar_balnus', 'tif', 'wsa_sugar_nop'],
+      ['sugar_jateng', 'reg', 'wsa_sugar_nop'],
+      ['sugar_jatim', 'reg', 'wsa_sugar_nop'],
+      // TT3
+      ['ttr3_tif', 'tif', 'wsa_ttr3'],
+      ['ttr3_district_tif3', 'tif', 'wsa_ttr3'],
+      ['ttr3_nas', 'reg', 'wsa_ttr3'],
+      ['ttr3_tr4', 'reg', 'wsa_ttr3'],
+      ['ttr3_tr5', 'reg5', 'wsa_ttr3'],
+      ['ttr3_area', 'area', 'wsa_ttr3_nop'],
+      ['ttr3_balnus', 'tif', 'wsa_ttr3_nop'],
+      ['ttr3_jateng', 'reg', 'wsa_ttr3_nop'],
+      ['ttr3_jatim', 'reg', 'wsa_ttr3_nop'],
+      // TTR6
+      ['ttr6_tif', 'tif', 'wsa_ttr6'],
+      ['ttr6_district_tif3', 'tif', 'wsa_ttr6'],
+      ['ttr6_nas', 'reg', 'wsa_ttr6'],
+      ['ttr6_tr4', 'reg', 'wsa_ttr6'],
+      ['ttr6_tr5', 'reg5', 'wsa_ttr6'],
+      ['ttr6_area', 'area', 'wsa_ttr6_nop'],
+      ['ttr6_balnus', 'tif', 'wsa_ttr6_nop'],
+      ['ttr6_jateng', 'reg', 'wsa_ttr6_nop'],
+      ['ttr6_jatim', 'reg', 'wsa_ttr6_nop'],
+      // TTR66
+      ['ttr36_tif', 'tif', 'wsa_ttr36'],
+      ['ttr36_district_tif3', 'tif', 'wsa_ttr36'],
+      ['ttr36_nas', 'reg', 'wsa_ttr36'],
+      ['ttr36_tr4', 'reg', 'wsa_ttr36'],
+      ['ttr36_tr5', 'reg5', 'wsa_ttr36'],
+      ['ttr36_area', 'area', 'wsa_ttr36_nop'],
+      ['ttr36_balnus', 'tif', 'wsa_ttr36_nop'],
+      ['ttr36_jateng', 'reg', 'wsa_ttr36_nop'],
+      ['ttr36_jatim', 'reg', 'wsa_ttr36_nop'],
+      // TTRmanja
+      ['ttrmanja_tif', 'tif', 'wsa_ttrmanja'],
+      ['ttrmanja_district_tif3', 'tif', 'wsa_ttrmanja'],
+      ['ttrmanja_nas', 'reg', 'wsa_ttrmanja'],
+      ['ttrmanja_tr4', 'reg', 'wsa_ttrmanja'],
+      ['ttrmanja_tr5', 'reg5', 'wsa_ttrmanja'],
+      ['ttrmanja_area', 'area', 'wsa_ttrmanja_nop'],
+      ['ttrmanja_balnus', 'tif', 'wsa_ttrmanja_nop'],
+      ['ttrmanja_jateng', 'reg', 'wsa_ttrmanja_nop'],
+      ['ttrmanja_jatim', 'reg', 'wsa_ttrmanja_nop'],
+    ];
 
-// Tutup koneksi setelah semua query selesai
-setTimeout(() => {
-  connection.end();
-}, 5000);
-
-async function main() {
-  deleteExistingData();
-
-  deleteExistingData();
-  await inputDataToDatabase('service_tif', 'tif', 'wsa_service');
-  await inputDataToDatabase('service_district', 'tif', 'wsa_service');
-  await inputDataToDatabase('service_nas', 'reg', 'wsa_service');
-  await inputDataToDatabase('service_tr4', 'reg', 'wsa_service');
-  await inputDataToDatabase('service_tr5', 'reg', 'wsa_service');
-
-  await inputDataToDatabase('service_area', 'area', 'wsa_service_nop');
-  await inputDataToDatabase('service_balnus', 'balnus', 'wsa_service_nop');
-  await inputDataToDatabase('service_jateng', 'jateng', 'wsa_service_nop');
-  await inputDataToDatabase('service_jatim', 'jatim', 'wsa_service_nop');
-
-  await inputDataToDatabase('sugar_tif', 'tif', 'wsa_sugar');
-  await inputDataToDatabase('sugar_district', 'tif', 'wsa_sugar');
-  await inputDataToDatabase('sugar_nas', 'reg', 'wsa_sugar');
-  await inputDataToDatabase('sugar_tr4', 'reg', 'wsa_sugar');
-  await inputDataToDatabase('sugar_tr5', 'reg', 'wsa_sugar');
-
-  await inputDataToDatabase('sugar_area', 'area', 'wsa_sugar_nop');
-  await inputDataToDatabase('sugar_balnus', 'balnus', 'wsa_sugar_nop');
-  await inputDataToDatabase('sugar_jateng', 'jateng', 'wsa_sugar_nop');
-  await inputDataToDatabase('sugar_jatim', 'jatim', 'wsa_sugar_nop');
-
-  await inputDataToDatabase('ttr3_tif', 'tif', 'wsa_ttr3');
-  await inputDataToDatabase('ttr3_district', 'tif', 'wsa_ttr3');
-  await inputDataToDatabase('ttr3_nas', 'reg', 'wsa_ttr3');
-  await inputDataToDatabase('ttr3_tr4', 'reg', 'wsa_ttr3');
-  await inputDataToDatabase('ttr3_tr5', 'reg', 'wsa_ttr3');
-
-  await inputDataToDatabase('ttr3_area', 'area', 'wsa_ttr3_nop');
-  await inputDataToDatabase('ttr3_balnus', 'balnus', 'wsa_ttr3_nop');
-  await inputDataToDatabase('ttr3_jateng', 'jateng', 'wsa_ttr3_nop');
-  await inputDataToDatabase('ttr3_jatim', 'jatim', 'wsa_ttr3_nop');
-
-  await inputDataToDatabase('ttr6_tif', 'tif', 'wsa_ttr6');
-  await inputDataToDatabase('ttr6_district', 'tif', 'wsa_ttr6');
-  await inputDataToDatabase('ttr6_nas', 'reg', 'wsa_ttr6');
-  await inputDataToDatabase('ttr6_tr4', 'reg', 'wsa_ttr6');
-  await inputDataToDatabase('ttr6_tr5', 'reg', 'wsa_ttr6');
-
-  await inputDataToDatabase('ttr6_area', 'area', 'wsa_ttr6_nop');
-  await inputDataToDatabase('ttr6_balnus', 'balnus', 'wsa_ttr6_nop');
-  await inputDataToDatabase('ttr6_jateng', 'jateng', 'wsa_ttr6_nop');
-  await inputDataToDatabase('ttr6_jatim', 'jatim', 'wsa_ttr6_nop');
-
-  await inputDataToDatabase('ttr36_tif', 'tif', 'wsa_ttr36');
-  await inputDataToDatabase('ttr36_district', 'tif', 'wsa_ttr36');
-  await inputDataToDatabase('ttr36_nas', 'reg', 'wsa_ttr36');
-  await inputDataToDatabase('ttr36_tr4', 'reg', 'wsa_ttr36');
-  await inputDataToDatabase('ttr36_tr5', 'reg', 'wsa_ttr36');
-
-  await inputDataToDatabase('ttr36_area', 'area', 'wsa_ttr36_nop');
-  await inputDataToDatabase('ttr36_balnus', 'balnus', 'wsa_ttr36_nop');
-  await inputDataToDatabase('ttr36_jateng', 'jateng', 'wsa_ttr36_nop');
-  await inputDataToDatabase('ttr36_jatim', 'jatim', 'wsa_ttr36_nop');
-
-  await inputDataToDatabase('ttrmanja_tif', 'tif', 'wsa_ttrmanja');
-  await inputDataToDatabase('ttrmanja_district', 'tif', 'wsa_ttrmanja');
-  await inputDataToDatabase('ttrmanja_nas', 'reg', 'wsa_ttrmanja');
-  await inputDataToDatabase('ttrmanja_tr4', 'reg', 'wsa_ttrmanja');
-  await inputDataToDatabase('ttrmanja_tr5', 'reg', 'wsa_ttrmanja');
-
-  await inputDataToDatabase('ttrmanja_area', 'area', 'wsa_ttrmanja_nop');
-  await inputDataToDatabase('ttrmanja_balnus', 'balnus', 'wsa_ttrmanja_nop');
-  await inputDataToDatabase('ttrmanja_jateng', 'jateng', 'wsa_ttrmanja_nop');
-  await inputDataToDatabase('ttrmanja_jatim', 'jatim', 'wsa_ttrmanja_nop');
-
-  connection.end(); // tutup setelah semua selesai
+    for (const [file, jenis, insertToTable] of files) {
+      await inputDataToDatabase(file, jenis, insertToTable);
+    }
+  } catch (err) {
+    console.error('Error during data processing:', err);
+  } finally {
+    connection.end();
+  }
 }
 
-main().catch((err) => {
-  console.error('Terjadi error:', err);
-  connection.end();
-});
+run();

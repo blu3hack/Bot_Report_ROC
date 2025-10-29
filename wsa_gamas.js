@@ -40,7 +40,7 @@ const { periode_long_format } = require('./currentDate');
   // ================== INPUT OTP =====================
   async function getCaptchaFromDatabase() {
     return new Promise((resolve, reject) => {
-      exec('python otp.py', (error, stdout, stderr) => {
+      exec('python otp_840168.py', (error, stdout, stderr) => {
         if (error) {
           console.error(`Terjadi kesalahan: ${error.message}`);
           return reject(error);
@@ -93,6 +93,7 @@ const { periode_long_format } = require('./currentDate');
   }
 
   await insertOTP();
+  await page.waitForTimeout(20000);
 
   async function goToLinkByXPath(xpath) {
     await page.waitForXPath(xpath);
@@ -224,7 +225,8 @@ const { periode_long_format } = require('./currentDate');
   //   ================== proses pengambilan data table =========================
   async function AsrGuarantee() {
     console.log('============== Assurance Guarantee WSA ===============');
-    await sugar();
+    await page.waitForTimeout(10000);
+    // await sugar();
 
     async function sugar_assurance(company, regional, witel, nama_file) {
       // pilih tahun periode
@@ -291,7 +293,7 @@ const { periode_long_format } = require('./currentDate');
           console.error('Elemen <option> tidak ditemukan.');
         }
       }, witel);
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(10000);
 
       await tombol();
       const sugar_wsa = await page.evaluate(() => {
@@ -332,7 +334,7 @@ const { periode_long_format } = require('./currentDate');
 
   async function ServAvailability() {
     console.log('============== Service Availibility ===============');
-    await service_a();
+    // await service_a();
 
     async function ser_avail(company, regional, witel, nama_file) {
       // pilih tahun periode
@@ -433,15 +435,15 @@ const { periode_long_format } = require('./currentDate');
     await ser_avail(3, 7, 1, 'service_tr6');
     await ser_avail(3, 8, 1, 'service_tr7');
 
-    // await ser_avail(2, 4, 1, 'service_area');
-    // await ser_avail(2, 4, 2, 'service_balnus');
-    // await ser_avail(2, 4, 3, 'service_jateng');
-    // await ser_avail(2, 4, 4, 'service_jatim');
+    await ser_avail(2, 4, 1, 'service_area');
+    await ser_avail(2, 4, 2, 'service_balnus');
+    await ser_avail(2, 4, 3, 'service_jateng');
+    await ser_avail(2, 4, 4, 'service_jatim');
   }
   //  ================ TTR ===============
 
   async function ttr() {
-    await ttr3_diamond();
+    // await ttr3_diamond();
 
     async function jenis_ttr(indexType, kategori_ttr) {
       await page.waitForSelector('#ttr_type');
@@ -560,16 +562,16 @@ const { periode_long_format } = require('./currentDate');
       await sub_ttr(2, 4, 4, 'jatim');
     }
 
-    await jenis_ttr(1, 'ttr3');
-    await jenis_ttr(2, 'ttr6');
-    await jenis_ttr(4, 'ttr36');
-    await jenis_ttr(5, 'ttrmanja');
+    // await jenis_ttr(1, 'ttr3');
+    // await jenis_ttr(2, 'ttr6');
+    // await jenis_ttr(4, 'ttr36');
+    // await jenis_ttr(5, 'ttrmanja');
   }
 
   // Proses DOwnload Data
-  await SegmenAkses();
-  await AsrGuarantee();
-  // await ServAvailability();
+  // await SegmenAkses();
+  // await AsrGuarantee();
+  await ServAvailability();
   // await ttr();
 
   async function tombol() {
