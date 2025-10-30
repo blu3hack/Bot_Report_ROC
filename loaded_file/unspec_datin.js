@@ -8,7 +8,7 @@ const { insertDate } = require('../currentDate');
 
 // Fungsi untuk menghapus data pada tanggal saat ini
 function deleteExistingData() {
-  const tableForDelete = ['unspec_warranty', 'unspec_warranty_wifi'];
+  const tableForDelete = ['unspec_datin'];
   const currentDate = insertDate;
 
   tableForDelete.forEach((table) => {
@@ -23,7 +23,7 @@ function deleteExistingData() {
 
 // Fungsi untuk memasukkan data dari CSV ke database
 function inputDataToDatabase(file, insertToTable, jenis) {
-  const filePath = path.join(__dirname, 'ff_non_hsi', `${file}.csv`);
+  const filePath = path.join(__dirname, 'unspec_datin', `${file}.csv`);
 
   fs.createReadStream(filePath)
     .pipe(csv({ separator: ',', headers: false }))
@@ -32,31 +32,12 @@ function inputDataToDatabase(file, insertToTable, jenis) {
       const witel = data[Object.keys(data)[0]] || '';
 
       let real = '';
-      // avg = data[Object.keys(data)[1]] || '';
-      // jml = data[Object.keys(data)[2]] || '';
-      // if (avg == 0 || jml == 0) {
-      //   real = 100;
-      // } else {
-      //   real = data[Object.keys(data)[0]] || '';
-      // }
-      real = data[Object.keys(data)[3]] || '';
+      real = data[Object.keys(data)[11]] || '';
 
       let newWitel = '';
 
-      if (jenis == 'tif') {
-        newWitel = witel.replace('REG-', 'TERRITORY 0');
-      } else {
-        newWitel = witel.replace('REG-', 'REGIONAL 0');
-      }
-
-      const lokasi1 = newWitel.replace('JATIM BARAT', 'MALANG');
-      const lokasi2 = lokasi1.replace('JATIM TIMUR', 'SIDOARJO');
-      const lokasi3 = lokasi2.replace('SEMARANG JATENG UTARA', 'SEMARANG');
-      const lokasi4 = lokasi3.replace('SOLO JATENG TIMUR', 'SOLO');
-      const lokasi5 = lokasi4.replace('YOGYA JATENG SELATAN', 'YOGYAKARTA');
-
       const query = `INSERT INTO ${insertToTable} (tgl, jenis, regional, comply) VALUES (?, ?, ?, ?)`;
-      connection.query(query, [tgl, jenis, lokasi5, real], (err) => {
+      connection.query(query, [tgl, jenis, witel, real], (err) => {
         if (err) {
           console.error('Error inserting data:', err);
         }
@@ -86,17 +67,7 @@ function deleteUnwantedRows(table) {
 
 // Jalankan fungsi
 deleteExistingData();
-inputDataToDatabase('unspec_warranty_tif', 'unspec_warranty', 'tif');
-inputDataToDatabase('unspec_warranty_district', 'unspec_warranty', 'tif');
-inputDataToDatabase('unspec_warranty_reg', 'unspec_warranty', 'reg');
-inputDataToDatabase('unspec_warranty_reg4', 'unspec_warranty', 'reg');
-inputDataToDatabase('unspec_warranty_reg5', 'unspec_warranty', 'reg');
-
-inputDataToDatabase('unspec_warranty_wifi_tif', 'unspec_warranty_wifi', 'tif');
-inputDataToDatabase('unspec_warranty_wifi_district', 'unspec_warranty_wifi', 'tif');
-inputDataToDatabase('unspec_warranty_wifi_reg', 'unspec_warranty_wifi', 'reg');
-inputDataToDatabase('unspec_warranty_wifi_reg4', 'unspec_warranty_wifi', 'reg');
-inputDataToDatabase('unspec_warranty_wifi_reg5', 'unspec_warranty_wifi', 'reg');
+inputDataToDatabase('unspec_tif', 'unspec_datin', 'tif');
 
 // Tutup koneksi setelah semua query selesai
 setTimeout(() => {

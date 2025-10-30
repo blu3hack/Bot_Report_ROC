@@ -334,6 +334,7 @@ const { periode_long_format } = require('./currentDate');
 
   async function ServAvailability() {
     console.log('============== Service Availibility ===============');
+    await page.waitForTimeout(10000);
     // await service_a();
 
     async function ser_avail(company, regional, witel, nama_file) {
@@ -443,9 +444,11 @@ const { periode_long_format } = require('./currentDate');
   //  ================ TTR ===============
 
   async function ttr() {
+    await page.waitForTimeout(10000);
     // await ttr3_diamond();
 
     async function jenis_ttr(indexType, kategori_ttr) {
+      await page.waitForTimeout(10000);
       await page.waitForSelector('#ttr_type');
       await page.click('#ttr_type');
 
@@ -495,6 +498,7 @@ const { periode_long_format } = require('./currentDate');
           }
         }, company);
         await page.waitForTimeout(3000);
+
         await page.waitForSelector('#regional');
         await page.click('#regional');
 
@@ -562,17 +566,17 @@ const { periode_long_format } = require('./currentDate');
       await sub_ttr(2, 4, 4, 'jatim');
     }
 
-    // await jenis_ttr(1, 'ttr3');
-    // await jenis_ttr(2, 'ttr6');
-    // await jenis_ttr(4, 'ttr36');
-    // await jenis_ttr(5, 'ttrmanja');
+    await jenis_ttr(1, 'ttr3');
+    await jenis_ttr(2, 'ttr6');
+    await jenis_ttr(4, 'ttr36');
+    await jenis_ttr(5, 'ttrmanja');
   }
 
   // Proses DOwnload Data
-  // await SegmenAkses();
-  // await AsrGuarantee();
+  await SegmenAkses();
+  await AsrGuarantee();
   await ServAvailability();
-  // await ttr();
+  await ttr();
 
   async function tombol() {
     const [button] = await page.$x("//button[contains(., 'Filter')]");
