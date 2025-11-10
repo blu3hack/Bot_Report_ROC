@@ -7,13 +7,13 @@ const { insertDate } = require('../currentDate');
 // Fungsi untuk menghapus data pada tanggal saat ini
 function deleteExistingData() {
   return new Promise((resolve, reject) => {
-    const tableForDelete = ['wsa_sugar', 'wsa_service', 'wsa_ttr3', 'wsa_ttr6', 'wsa_ttr36', 'wsa_ttrmanja'];
+    const tableForDelete = ['wsa_sugar_nop', 'wsa_service_nop', 'wsa_ttr3_nop', 'wsa_ttr6_nop', 'wsa_ttr36_nop', 'wsa_ttrmanja_nop', 'wsa_sugar', 'wsa_service', 'wsa_ttr3', 'wsa_ttr6', 'wsa_ttr36', 'wsa_ttrmanja'];
     const currentDate = insertDate;
 
     let count = 0;
 
     tableForDelete.forEach((table) => {
-      const sql = `DELETE FROM ${table}`;
+      const sql = `DELETE FROM ${table} where tgl = ?`;
       connection.query(sql, [currentDate], (err) => {
         if (err) {
           console.error(`Error deleting data from ${table}:`, err);

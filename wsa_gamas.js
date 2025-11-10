@@ -444,6 +444,7 @@ const { periode_long_format } = require('./currentDate');
   //  ================ TTR ===============
 
   async function ttr() {
+    console.log('============== TTR COMPLIANCE ===============');
     await page.waitForTimeout(10000);
     // await ttr3_diamond();
 
@@ -566,8 +567,8 @@ const { periode_long_format } = require('./currentDate');
       await sub_ttr(2, 4, 4, 'jatim');
     }
 
-    await jenis_ttr(1, 'ttr3');
-    await jenis_ttr(2, 'ttr6');
+    // await jenis_ttr(1, 'ttr3');
+    // await jenis_ttr(2, 'ttr6');
     await jenis_ttr(4, 'ttr36');
     await jenis_ttr(5, 'ttrmanja');
   }

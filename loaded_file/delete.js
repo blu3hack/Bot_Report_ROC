@@ -60,13 +60,14 @@ function clearFolder(folderPath) {
   });
 }
 
-clearFolder('./asr_wifi');
-clearFolder('./asr_datin');
-clearFolder('./wsa');
+// clearFolder('./asr_wifi');
+// clearFolder('./asr_datin');
+// clearFolder('./wsa');
 clearFolder('./wsa_gamas');
-clearFolder('./ff_non_hsi');
-clearFolder('./wifi_revi');
-clearFolder('./cnop');
-clearFolder('./ps_re');
-clearFolder('./msa_upload');
+// clearFolder('./ff_non_hsi');
+// clearFolder('./wifi_revi');
+// clearFolder('./cnop');
+// clearFolder('./ps_re');
+// clearFolder('./msa_upload');
+clearFolder('./unspec_datin');
 // deleteTables();

@@ -4,7 +4,7 @@ const { insertDate } = require('../currentDate');
 
 // Hapus data lama berdasarkan tanggal
 function deleteExistingData(callback) {
-  const tableForDelete = ['unspec_datin'];
+  const tableForDelete = ['unspec_hsi'];
   const currentDate = insertDate;
 
   let done = 0;
@@ -30,17 +30,17 @@ function prosesUnspecDatin(jenis, area, callback) {
   const query = `
     SELECT
       sc_lokasi.witel AS witel,
-      list_datin.comply AS list_datin,
-      tiket_open_datin.comply AS tiket_open_datin
+      list_hsi.comply AS list_hsi,
+      tiket_open_hsi.comply AS tiket_open_hsi
     FROM sc_lokasi
-    LEFT JOIN list_datin 
-      ON sc_lokasi.witel = list_datin.regional 
-      AND list_datin.tgl = '${insertDate}'
-      AND list_datin.jenis = '${jenis}'
-    LEFT JOIN tiket_open_datin
-      ON sc_lokasi.witel = tiket_open_datin.regional 
-      AND tiket_open_datin.tgl = '${insertDate}'
-      AND tiket_open_datin.jenis = '${jenis}'
+    LEFT JOIN list_hsi 
+      ON sc_lokasi.witel = list_hsi.regional 
+      AND list_hsi.tgl = '${insertDate}'
+      AND list_hsi.jenis = '${jenis}'
+    LEFT JOIN tiket_open_hsi
+      ON sc_lokasi.witel = tiket_open_hsi.regional 
+      AND tiket_open_hsi.tgl = '${insertDate}'
+      AND tiket_open_hsi.jenis = '${jenis}'
     WHERE sc_lokasi.reg = '${area}'
   `;
 
@@ -54,8 +54,8 @@ function prosesUnspecDatin(jenis, area, callback) {
     const insertValues = [];
 
     results.forEach((row) => {
-      const list_datin = parseFloat(row.list_datin) || 0;
-      const list_open = parseFloat(row.tiket_open_datin) || 0;
+      const list_datin = parseFloat(row.list_hsi) || 0;
+      const list_open = parseFloat(row.tiket_open_hsi) || 0;
       const unspec_datin = list_datin > 0 ? ((list_datin - list_open) / list_datin) * 100 : 0;
       insertValues.push([insertDate, jenis, row.witel, list_datin, list_open, unspec_datin.toFixed(2)]);
     });
@@ -67,7 +67,7 @@ function prosesUnspecDatin(jenis, area, callback) {
     }
 
     const insertQuery = `
-      INSERT INTO unspec_datin (tgl, jenis, regional, list_datin, list_open, comply)
+      INSERT INTO unspec_hsi (tgl, jenis, regional, list_datin, list_open, comply)
       VALUES ?
     `;
 
@@ -75,7 +75,7 @@ function prosesUnspecDatin(jenis, area, callback) {
       if (err) {
         console.error('❌ Gagal melakukan insert:', err);
       } else {
-        console.log(`✅ Berhasil insert ${insertValues.length} baris ke tabel unspec_datin`);
+        console.log(`✅ Berhasil insert ${insertValues.length} baris ke tabel unspec_hsi`);
       }
       if (callback) callback();
     });
