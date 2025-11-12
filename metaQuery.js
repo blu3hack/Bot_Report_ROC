@@ -98,6 +98,16 @@ async function main() {
     SELECT 'ONM-ENT-% Closed SQM? HSI' AS kpi, sc_lokasi.witel AS lokasi, sqm_hsi.jenis AS Area, sqm_hsi.comply AS Realisasi FROM sc_lokasi LEFT JOIN sqm_hsi ON sc_lokasi.witel = sqm_hsi.regional AND sqm_hsi.tgl = '${tgl}' AND sqm_hsi.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
     UNION ALL
     SELECT 'ONM-ENT-TTR Compliance Ticket Non-Numbering' AS kpi, sc_lokasi.witel AS lokasi, ttr_non_numbering.jenis AS Area, ttr_non_numbering.comply AS Realisasi FROM sc_lokasi LEFT JOIN ttr_non_numbering ON sc_lokasi.witel = ttr_non_numbering.regional AND ttr_non_numbering.tgl = '${tgl}' AND ttr_non_numbering.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
+    UNION ALL
+    SELECT 'ASR-WHM-MTTRi Critical Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.critical AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
+    UNION ALL
+    SELECT 'ASR-WHM-MTTRi Low Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.low AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
+    UNION ALL
+    SELECT 'ASR-WHM-MTTRi Major Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.major AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
+    UNION ALL
+    SELECT 'ASR-WHM-MTTRi Minor Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.minor AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
+    UNION ALL
+    SELECT 'ASR-WHM-MTTRi Premium Site Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.premium AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('tif') WHERE sc_lokasi.reg IN ('tif', 'district')
   `;
 
   const sqldistrict = `
@@ -186,6 +196,16 @@ async function main() {
       SELECT 'ONM-ENT-% Closed SQM? HSI' AS kpi, sc_lokasi.witel AS lokasi, sqm_hsi.jenis AS Area, sqm_hsi.comply AS Realisasi FROM sc_lokasi LEFT JOIN sqm_hsi ON sc_lokasi.witel = sqm_hsi.regional AND sqm_hsi.tgl = '${tgl}' AND sqm_hsi.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
       UNION ALL
       SELECT 'ONM-ENT-TTR Compliance Ticket Non-Numbering' AS kpi, sc_lokasi.witel AS lokasi, ttr_non_numbering.jenis AS Area, ttr_non_numbering.comply AS Realisasi FROM sc_lokasi LEFT JOIN ttr_non_numbering ON sc_lokasi.witel = ttr_non_numbering.regional AND ttr_non_numbering.tgl = '${tgl}' AND ttr_non_numbering.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
+      UNION ALL
+      SELECT 'ASR-WHM-MTTRi Critical Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.critical AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
+      UNION ALL
+      SELECT 'ASR-WHM-MTTRi Low Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.low AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
+      UNION ALL
+      SELECT 'ASR-WHM-MTTRi Major Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.major AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
+      UNION ALL
+      SELECT 'ASR-WHM-MTTRi Minor Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.minor AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
+      UNION ALL
+      SELECT 'ASR-WHM-MTTRi Premium Site Compliance' AS kpi, sc_lokasi.witel AS lokasi, mttr_mso.jenis AS Area, mttr_mso.premium AS Realisasi FROM sc_lokasi LEFT JOIN mttr_mso ON sc_lokasi.witel = mttr_mso.regional AND mttr_mso.tgl = '${tgl}' AND mttr_mso.jenis IN ('reg') WHERE sc_lokasi.reg IN ('nas', 'witel')
   `;
 
   const [tif] = await connection.execute(sqltif);

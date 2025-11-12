@@ -40,7 +40,7 @@ const { periode_long_format } = require('./currentDate');
   // ================== INPUT OTP =====================
   async function getCaptchaFromDatabase() {
     return new Promise((resolve, reject) => {
-      exec('python otp_840168.py', (error, stdout, stderr) => {
+      exec('python otp.py', (error, stdout, stderr) => {
         if (error) {
           console.error(`Terjadi kesalahan: ${error.message}`);
           return reject(error);
@@ -568,15 +568,15 @@ const { periode_long_format } = require('./currentDate');
     }
 
     // await jenis_ttr(1, 'ttr3');
-    // await jenis_ttr(2, 'ttr6');
+    await jenis_ttr(2, 'ttr6');
     await jenis_ttr(4, 'ttr36');
     await jenis_ttr(5, 'ttrmanja');
   }
 
   // Proses DOwnload Data
-  await SegmenAkses();
-  await AsrGuarantee();
-  await ServAvailability();
+  // await SegmenAkses();
+  // await AsrGuarantee();
+  // await ServAvailability();
   await ttr();
 
   async function tombol() {

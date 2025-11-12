@@ -29,6 +29,7 @@ const { formattedDate: lastDate } = getDatePartsInJakarta(lastDayOfMonth);
 
 // Format-format yang diminta
 const periode_long_format = `${startdate} to ${today}`;
+const periode_end_format = `2025-01-01 to ${today}`;
 const periode_short_format = `${yyyy}${mm}`;
 const startdate_short_format = `${yyyy}${mm}${startDD}`;
 const today_short_format = today.replace(/-/g, '');
@@ -42,6 +43,7 @@ const insertDate = today;
 
 module.exports = {
   periode_long_format,
+  periode_end_format,
   periode_short_format,
   startdate_short_format,
   enddate_short_format,

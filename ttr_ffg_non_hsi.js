@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 // const pool = require('./connection');
 const { user, pass } = require('./login');
 const fs = require('fs');
-const { periode_long_format, enddate_long_format } = require('./currentDate');
+const { periode_long_format, enddate_long_format, periode_end_format } = require('./currentDate');
 const { exec } = require('child_process');
 
 (async () => {
@@ -135,10 +135,8 @@ const { exec } = require('child_process');
           }
         }
         // pilih tanggal
-        const result = periode_long_format;
-        // console.log(result);
 
-        async function selectdate(selectorDate) {
+        async function selectdate(selectorDate, result) {
           const inputSelector = selectorDate; // Ganti dengan selector elemen input Anda
           await page.waitForSelector(inputSelector);
 
@@ -158,8 +156,8 @@ const { exec } = require('child_process');
           );
         }
 
-        await selectdate('#provcomp_date');
-        await selectdate('#order_date');
+        await selectdate('#provcomp_date', periode_long_format);
+        await selectdate('#order_date', periode_end_format);
 
         await page.waitForTimeout(3000);
         await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle0' }), page.click('#filter_data > div > div:nth-child(8) > div > div > a')]);
@@ -496,9 +494,9 @@ const { exec } = require('child_process');
 
     // running FUnction
     await ttdc_non_hsi();
-    await ffg_non_hsi();
-    await provcomp();
-    await unspec_warranty();
+    // await ffg_non_hsi();
+    // await provcomp();
+    // await unspec_warranty();
   } catch (err) {
     console.error('Ada kesalahan:', err.message);
   } finally {
